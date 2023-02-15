@@ -1,0 +1,150 @@
+.loginPageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../theme/login_bg.webp');
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+}
+
+.loginBox {
+    min-width: 500px;
+    background-color: #fff;
+    padding: 65px 55px 55px;
+    border-radius: 10px;
+    z-index: 1;
+    animation: showBox 2s;
+}
+
+.loginTitleBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 36px;
+}
+
+.loginTitle {
+    color: #000;
+    font-size: 40px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+    user-select: none;
+}
+
+.formLoginBox {
+    color: #000;
+}
+
+.formLoginBox label {
+    font-size: 14px;
+    user-select: none;
+}
+
+.formLoginBox .inputBox input {
+    height: 50px;
+}
+
+.formLoginBox .passwordBox {
+    /* border-right: none; */
+    position: relative;
+}
+
+.visibilityIcon {
+    position: absolute;
+    top: calc(50% + 16px);
+    transform: translateY(-50%);
+    right: -42px;
+    padding: 13px;
+}
+
+.formLoginBox .passwordBox input:focus {
+    border-color: #d2d8dd;
+    box-shadow: none;
+    /* border-right: none; */
+}
+
+.formLoginBox input:focus {
+    border-color: #d2d8dd;
+    box-shadow: none;
+}
+
+.visibilityBox {
+    background-color: #fff !important;
+    border-left: none,
+}
+
+.visibilityBox:hover {
+    cursor: pointer;
+}
+
+.inputBox {
+    margin-bottom: 16px;
+}
+
+.forgotPasswordBox {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.forgotPasswordBox a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    user-select: none;
+}
+
+.forgotPasswordBox a:hover {
+    color: #a64bf4
+}
+
+.loginButtonBox {
+    margin-top: 32px;
+    width: 100%;
+    height: 50px;
+    transition: all .4s;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    z-index: 1;
+}
+
+.loginButtonBox .btnBg {
+    position: absolute;
+    z-index: -1;
+    width: 300%;
+    height: 100%;
+    background: -webkit-linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
+    top: 0;
+    left: -100%;
+    transition: all .4s;
+    -webkit-transition: all .4s;
+}
+
+.loginButtonBox .loginButton {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 32px;
+    z-index: 100;
+}
+
+.loginButtonBox:hover .btnBg {
+    left: 0;
+}
+
+@keyframes showBox {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
