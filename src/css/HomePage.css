@@ -1,0 +1,96 @@
+.homeContainer {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.contentBox{
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.userbox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 90px;
+}
+
+.userInfoBox {
+    display: flex;
+    width: 100%;
+    height: 90px;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #1e88e5;
+    border-bottom: 2px solid #f7f9fc;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    height: 90px;
+    align-items: flex-end;
+    justify-content: center;
+    color: #fff;
+}
+
+.userName {
+    font-size: 24px;
+    font-style: italic;
+    margin: 0;
+}
+
+.userPosition {
+    font-size: 16px;
+    font-style: italic;
+    margin: 0;
+}
+
+.logoutButtonBox {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 8px;
+    border: none;
+}
+
+.logoutButtonBox:hover {
+    opacity: 0.7;
+    border-radius: 100px;
+}
+
+.logoutButtonBox button {
+    width: 100%;
+    height: 100%;
+    border: none;
+    color: #fff;
+}
+
+.uploadFileBtnBox {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 90px;
+    margin-right: 0px;
+}
+
+.uploadFileBtnBox button {
+    height: 50px;
+}
+
+.sidebarBox{
+    width: 240px;
+    height: auto;
+}
+
+.mainContent{
+    padding: 20px;
+    flex: 2;
+}

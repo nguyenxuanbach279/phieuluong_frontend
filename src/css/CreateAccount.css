@@ -1,0 +1,97 @@
+.accountContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.accountTitleBox {
+    display: flex;
+    align-items: center;
+    height: 70px;
+}
+
+.accountTitle {
+    font-size: 36px;
+    font-weight: 700;
+    user-select: none;
+}
+
+.createAccountBox {
+    margin-top: 32px;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.formCreateAccount {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.formRowBox {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.formRowBox label {
+    min-width: 120px;
+    font-size: 24px;
+    user-select: none;
+}
+
+.input-group{
+    max-width: 300px;
+}
+
+.formRowBox input {
+    height: 50px;
+    max-width: 300px;
+    padding: 4px 8px;
+}
+
+.formRowBox select{
+    height: 50px;
+    width: 240px;
+    padding: 4px 8px;
+}
+
+.formRowBox select option{
+    font-size: 20px;
+}
+
+.buttonBox{
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 12px;
+}
+
+.buttonBox button{
+    width: 140px;
+    height: 50px;
+}
+
+.formRowBox:nth-child(2){
+    display: flex;
+}
+
+.visibilityIconCreateAcc {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.visibilityIconCreateAcc:hover{
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border-radius: 100px;
+}
+
+/* table */
+
+
