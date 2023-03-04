@@ -2,13 +2,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    border: none;
     font-family: 'Roboto', sans-serif;;
 }
 
 button {
     outline: none!important;
-    border: none;
     background: 0 0;
+}
+
+p {
+    margin: 0;
 }
 

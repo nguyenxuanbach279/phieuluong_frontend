@@ -53,8 +53,8 @@ export default function LoginPage() {
                     value={values.email}
                     onChange={handleChange}
                     placeholder="Type your email"
-                    // isValid={touched.email && !errors.email}
-                    // isInvalid={!!errors.email}
+                      // isValid={touched.email && !errors.email}
+                      // isInvalid={!!errors.email}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.email}
