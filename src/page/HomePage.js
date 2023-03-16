@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { AiOutlineLogout, AiOutlineUpload } from "react-icons/ai";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { SideBar } from "../components";
+import { AppContext } from "../contexts/app.context";
 import "../css/HomePage.css";
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const { appState, dispatch } = useContext(AppContext);
+
+  useEffect(() => {
+    if (appState == null || appState.loginUser == null) {
+      navigate("/login");
+    }
+  }, []);
+
+  const onLogout = () => {
+    navigate("/login");
+    dispatch({
+      type: "SET_JWT_TOKEN_ACTION",
+      jwtToken: null,
+    });
+    dispatch({
+      type: "SET_LOGIN_USER_ACTION",
+      loginUser: null,
+    });
+  };
+
+  if (appState == null || appState.loginUser == null) {
+    return null;
+  }
+
   return (
     <div className="homeContainer">
       <div className="sidebarBox">
@@ -19,16 +45,11 @@ export default function HomePage() {
               <p className="userPosition">Kế toán</p>
             </div>
             <div className="logoutButtonBox">
-              <button>
+              <button onClick={onLogout}>
                 <AiOutlineLogout style={{ width: 28, height: 28 }} />
               </button>
             </div>
           </div>
-          {/* <div className="uploadFileBtnBox">
-            <Button>
-              Upload file <AiOutlineUpload style={{ width: 24, height: 24 }} />
-            </Button>
-          </div> */}
         </div>
         <div className="mainContent">
           <Outlet />
