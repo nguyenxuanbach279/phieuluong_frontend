@@ -1,4 +1,4 @@
 import SideBar from "./SideBar";
-import PaginationComponent from "./PaginationComponent";
+import PaginationComponent from "./Pagination";
 
 export { SideBar, PaginationComponent };

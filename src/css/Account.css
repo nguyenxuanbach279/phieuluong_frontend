@@ -7,6 +7,7 @@
 
 .accountListTitleBox {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     height: 70px;
 }
@@ -15,4 +16,14 @@
     font-size: 36px;
     font-weight: 700;
     user-select: none;
+}
+
+.form-control{
+    width: 400px !important;
+}
+
+.footerAccountPage {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
 }

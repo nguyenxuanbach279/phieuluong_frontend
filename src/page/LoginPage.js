@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import "../css/LoginPage.css";
 import { FiMail, FiKey } from "react-icons/fi";
@@ -6,19 +6,53 @@ import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { ToastContainer, toast } from "react-toastify";
+import api from "../services/api";
+import jwtDecode from "jwt-decode";
+import { AppContext } from "../contexts/app.context";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string()
-    .min(6, "Too Short!")
+    .min(2, "Too Short!")
     .max(24, "Too Long!")
     .required("Required"),
 });
 
-export default function LoginPage() {
+function LoginPage() {
+  const navigate = useNavigate();
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const { appState, dispatch } = useContext(AppContext);
+
+  useEffect(() => {
+    if (appState && appState.loginUser) {
+      navigate("/account");
+    }
+  }, []);
+
   const clickShowHidePassword = () => {
     setIsShowPassword((pre) => !pre);
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      const loginDataRes = await api.login(values.email, values.password);
+      const userDecode = loginDataRes.data.data;
+      const user = jwtDecode(loginDataRes.data.data);
+      console.log(user);
+      dispatch({
+        type: "SET_JWT_TOKEN_ACTION",
+        jwtToken: userDecode,
+      });
+
+      dispatch({
+        type: "SET_LOGIN_USER_ACTION",
+        loginUser: user,
+      });
+      navigate("/appointment");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -33,11 +67,11 @@ export default function LoginPage() {
         </div>
         <Formik
           validationSchema={loginSchema}
-          onSubmit={console.log}
           initialValues={{
             email: "",
             password: "",
           }}
+          onSubmit={(values) => handleSubmit(values)}
         >
           {({ handleSubmit, handleChange, values, errors, touched }) => (
             <Form noValidate className="formLoginBox">
@@ -53,8 +87,8 @@ export default function LoginPage() {
                     value={values.email}
                     onChange={handleChange}
                     placeholder="Type your email"
-                      // isValid={touched.email && !errors.email}
-                      // isInvalid={!!errors.email}
+                    // isValid={touched.email && !errors.email}
+                    // isInvalid={!!errors.email}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.email}
@@ -107,7 +141,7 @@ export default function LoginPage() {
           )}
         </Formik>
       </div>
-      <ToastContainer position="bottom-center" autoClose={5000} />
     </div>
   );
 }
+export default LoginPage;

@@ -8,7 +8,7 @@ import * as Yup from "yup";
 const createAccountSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string()
-    .min(6, "Too Short!")
+    .min(2, "Too Short!")
     .max(24, "Too Long!")
     .required("Required"),
 });
@@ -21,6 +21,10 @@ export default function CreateAccount() {
     setIsShowPassword((pre) => !pre);
   };
 
+  const onClickCreateAccount = (value) => {
+    console.log(value)
+  }
+
   return (
     <div className="accountContainer">
       <div className="accountTitleBox">
@@ -28,7 +32,7 @@ export default function CreateAccount() {
       </div>
       <Formik
         validationSchema={createAccountSchema}
-        onSubmit={(values) => setData(values)}
+        onSubmit={(values) => onClickCreateAccount(values)}
         initialValues={{
           email: "",
           password: "",

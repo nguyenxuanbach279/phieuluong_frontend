@@ -42,6 +42,10 @@
     user-select: none;
 }
 
+.input-group {
+    max-width: none !important;
+}
+
 .formLoginBox .inputBox input {
     height: 50px;
 }
@@ -55,8 +59,9 @@
     position: absolute;
     top: calc(50% + 16px);
     transform: translateY(-50%);
-    right: -42px;
+    right: -50px;
     padding: 13px;
+    z-index: 100;
 }
 
 .formLoginBox .passwordBox input:focus {

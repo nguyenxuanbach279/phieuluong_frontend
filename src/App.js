@@ -6,16 +6,17 @@ import {
   History,
   MakeAppointment,
   Setting,
-  CreateAccount
+  CreateAccount,
 } from "./page";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import AppContextProvider from "./contexts/app.context";
 
 function App() {
   return (
-    <>
+    <AppContextProvider>
       <Routes>
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/" element={<HomePage />}>
@@ -26,7 +27,7 @@ function App() {
           <Route exact path="/setting" element={<Setting />} />
         </Route>
       </Routes>
-    </>
+    </AppContextProvider>
   );
 }
 
