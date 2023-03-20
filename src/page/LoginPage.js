@@ -26,7 +26,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (appState && appState.loginUser) {
-      navigate("/account");
+      navigate("/appointment");
     }
   }, []);
 
@@ -48,15 +48,19 @@ function LoginPage() {
         type: "SET_LOGIN_USER_ACTION",
         loginUser: user,
       });
+
+      const accountInfoRes = await api.getAccountInfo(userDecode, user.Email);
+      const accountInfo = accountInfoRes.data.data;
+      dispatch({
+        type: "SET_ACCOUNT_INFO",
+        accountInfo: accountInfo,
+      });
+
       navigate("/appointment");
     } catch (error) {
-      console.log(error);
+      toast.error("error");
     }
   };
-
-  useEffect(() => {
-    toast.error("error");
-  }, []);
 
   return (
     <div className="loginPageContainer">

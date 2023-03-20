@@ -17,26 +17,6 @@ export default function HomePage() {
     }
   }, []);
 
-  useEffect(() => {
-    getAccountInfo();
-  }, []);
-
-  const getAccountInfo = async () => {
-    try {
-      const accountInfoRes = await api.getAccountInfo(
-        appState.jwtToken,
-        appState.loginUser.Email
-      );
-      const accountInfo = accountInfoRes.data.data;
-      dispatch({
-        type: "SET_ACCOUNT_INFO",
-        accountInfo: accountInfo,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const onLogout = () => {
     navigate("/login");
     dispatch({
@@ -55,8 +35,14 @@ export default function HomePage() {
         <div className="userbox">
           <div className="userInfoBox">
             <div className="userInfo">
-              <p className="userName">{appState.accountInfo.name}</p>
-              <p className="userPosition">{appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}</p>
+              <p className="userName">
+                {appState.accountInfo.name
+                  ? appState.accountInfo.name
+                  : "User"}
+              </p>
+              <p className="userPosition">
+                {appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}
+              </p>
             </div>
             <div className="logoutButtonBox">
               <button onClick={onLogout}>
