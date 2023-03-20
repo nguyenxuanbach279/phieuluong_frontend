@@ -39,7 +39,6 @@ function LoginPage() {
       const loginDataRes = await api.login(values.email, values.password);
       const userDecode = loginDataRes.data.data;
       const user = jwtDecode(loginDataRes.data.data);
-      console.log(user);
       dispatch({
         type: "SET_JWT_TOKEN_ACTION",
         jwtToken: userDecode,

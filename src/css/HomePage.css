@@ -41,12 +41,14 @@
     font-size: 24px;
     font-style: italic;
     margin: 0;
+    user-select: none;
 }
 
 .userPosition {
     font-size: 16px;
     font-style: italic;
     margin: 0;
+    user-select: none;
 }
 
 .logoutButtonBox {
@@ -91,6 +93,6 @@
 }
 
 .mainContent{
-    padding: 24px 0;
+    padding-top: 24px;
     flex: 2;
 }

@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/Sidebar.css";
 import { BsCalendar3 } from "react-icons/bs";
 import { BiHistory } from "react-icons/bi";
 import { AiOutlineSetting } from "react-icons/ai";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { AppContext } from "../contexts/app.context";
 
-export default function SideBar() {
-  const [clickItem, setClickItem] = useState(-1);
-
+function SideBar() {
+  const { appState, dispatch } = useContext(AppContext);
   const onClickItem = (index) => {
-    setClickItem(index);
+    dispatch({
+      type: "SET_CHOOSE_SIDEBAR_ITEM",
+      indexItem: index,
+    });
   };
+
 
   const menuItem = [
     {
@@ -46,7 +50,7 @@ export default function SideBar() {
           return (
             <div
               key={index}
-              className={clickItem === index ? "itemBox active" : "itemBox"}
+              className={appState.indexItem === index ? "itemBox active" : "itemBox"}
               onClick={() => onClickItem(index)}
             >
               <Link to={item.path}>
@@ -60,3 +64,5 @@ export default function SideBar() {
     </div>
   );
 }
+
+export default SideBar

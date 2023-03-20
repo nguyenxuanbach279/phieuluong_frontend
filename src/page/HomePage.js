@@ -5,6 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { SideBar } from "../components";
 import { AppContext } from "../contexts/app.context";
 import "../css/HomePage.css";
+import api from "../services/api";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -16,15 +17,30 @@ export default function HomePage() {
     }
   }, []);
 
+  useEffect(() => {
+    getAccountInfo();
+  }, []);
+
+  const getAccountInfo = async () => {
+    try {
+      const accountInfoRes = await api.getAccountInfo(
+        appState.jwtToken,
+        appState.loginUser.Email
+      );
+      const accountInfo = accountInfoRes.data.data;
+      dispatch({
+        type: "SET_ACCOUNT_INFO",
+        accountInfo: accountInfo,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onLogout = () => {
     navigate("/login");
     dispatch({
-      type: "SET_JWT_TOKEN_ACTION",
-      jwtToken: null,
-    });
-    dispatch({
-      type: "SET_LOGIN_USER_ACTION",
-      loginUser: null,
+      type: "RESET_STATE",
     });
   };
 
@@ -39,8 +55,8 @@ export default function HomePage() {
         <div className="userbox">
           <div className="userInfoBox">
             <div className="userInfo">
-              <p className="userName">Nguyễn Văn A</p>
-              <p className="userPosition">Kế toán</p>
+              <p className="userName">{appState.accountInfo.name}</p>
+              <p className="userPosition">{appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}</p>
             </div>
             <div className="logoutButtonBox">
               <button onClick={onLogout}>

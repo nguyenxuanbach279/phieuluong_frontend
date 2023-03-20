@@ -25,7 +25,7 @@
 }
 
 .sidebarMenuBox {
-    padding: 15px;
+    padding: 25px 15px;
     flex: 2;
     box-shadow: 4px 0px 4px 0px rgba(148,148,148,0.3);
     z-index: 10;

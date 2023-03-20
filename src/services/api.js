@@ -21,7 +21,49 @@ const getEmployeeList = (jwtToken, page, size, search) => {
   });
 };
 
+const getAccountList = (jwtToken) => {
+  return api.get("Admin", {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getAccountInfo = (jwtToken, email) => {
+  return api.get(`Account/${email}`, {
+    params: { email: email },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const createNewAccount = (jwtToken, newAccountInfo) => {
+  return api.post("Admin/insert", newAccountInfo, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const deleteAccount = (jwtToken, email) => {
+  return api.get(`Account/${email}`, {
+    params: { email: email },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
+  getAccountList,
+  getAccountInfo,
+  createNewAccount,
+  deleteAccount,
 };
