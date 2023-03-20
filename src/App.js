@@ -13,6 +13,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import AppContextProvider from "./contexts/app.context";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -27,6 +28,14 @@ function App() {
           <Route exact path="/setting" element={<Setting />} />
         </Route>
       </Routes>
+      <ToastContainer
+        autoClose={5000}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+      />
     </AppContextProvider>
   );
 }
