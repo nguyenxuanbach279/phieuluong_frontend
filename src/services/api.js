@@ -59,6 +59,16 @@ const deleteAccount = (jwtToken, email) => {
   });
 };
 
+const deleteEmployee = (jwtToken, id) => {
+  return api.get(`Account/${id}`, {
+    params: { id: id },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
@@ -66,4 +76,5 @@ export default {
   getAccountInfo,
   createNewAccount,
   deleteAccount,
+  deleteEmployee,
 };

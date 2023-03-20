@@ -18,7 +18,6 @@ const createAccountSchema = Yup.object().shape({
 export default function CreateAccount() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const { appState, dispatch } = useContext(AppContext);
-  const [data, setData] = useState({});
 
   const clickShowHidePassword = () => {
     setIsShowPassword((pre) => !pre);
