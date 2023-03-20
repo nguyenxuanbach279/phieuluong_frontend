@@ -10,30 +10,28 @@ import { useNavigate } from "react-router-dom";
 
 export default function Account() {
   const navigate = useNavigate();
-  const [employeeList, setEmployeeList] = useState([]);
-  const [totalEmployee, setTotalEmployee] = useState(0);
+  const [accountList, setAccountList] = useState([]);
+  const [totalAccount, setTotalAccount] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [keySearch, setKeySearch] = useState("");
   const { appState, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    getEmployeeList(1);
+    getAccountList(1);
   }, [keySearch]);
 
-  const getEmployeeList = async (page) => {
+  const getAccountList = async (page) => {
     try {
-      const employeeListRes = await api.getEmployeeList(
+      const accountListRes = await api.getEmployeeList(
         appState.jwtToken,
         page,
         pageSize,
         keySearch
       );
-
-      console.log(employeeListRes);
-      if (employeeListRes.status === 200) {
-        setEmployeeList(employeeListRes.data.data.data);
-        setTotalEmployee(employeeListRes.data.data.totalRecord);
+      if (accountListRes.status === 200) {
+        setAccountList(accountListRes.data.data.data);
+        setTotalAccount(accountListRes.data.data.totalRecord);
       }
     } catch (error) {
       // xu ly loi
@@ -43,7 +41,7 @@ export default function Account() {
 
   const onChangePage = (event, page) => {
     setPageNumber(page);
-    getEmployeeList(page);
+    getAccountList(page);
   };
 
   const onChangeKeySearch = (e) => {
@@ -53,6 +51,14 @@ export default function Account() {
   const onClickCreateAccount = () => {
     navigate("/account/create");
   };
+
+  const clickDeleteAccount = async (account) => {
+    try {
+      const deleteAccountRes = await api.deleteAccount(appState.jwtToken, account.email)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="accountListContainer">
@@ -77,24 +83,24 @@ export default function Account() {
               <th>Email</th>
               <th>Chức vụ</th>
               <th>Phòng ban</th>
-              <th>Chi tiết</th>
+              <th>Người tạo</th>
               <th>Xóa</th>
             </tr>
           </thead>
           <tbody>
-            {employeeList.map((employee) => {
+            {accountList.map((account) => {
               return (
-                <tr key={employee.id}>
-                  <td>{employee.employeeCode}</td>
-                  <td>{employee.name}</td>
-                  <td>{employee.email}</td>
-                  <td>{employee.currentLevel}</td>
+                <tr key={account.id}>
+                  <td>{account.employeeCode}</td>
+                  <td>{account.name}</td>
+                  <td>{account.email}</td>
+                  <td>{account.currentLevel}</td>
                   <td>Kế toán</td>
                   <td>
                     <BsThreeDotsVertical />
                   </td>
                   <td>
-                    <RiDeleteBin6Line />
+                    <RiDeleteBin6Line onClick={() => clickDeleteAccount(account)}/>
                   </td>
                 </tr>
               );
@@ -105,7 +111,7 @@ export default function Account() {
 
         <div className="footerAccountPage">
           <Pagination
-            count={Math.ceil(totalEmployee / pageSize)}
+            count={Math.ceil(totalAccount / pageSize)}
             variant="outlined"
             page={pageNumber}
             shape="rounded"
