@@ -36,12 +36,12 @@ export default function HomePage() {
           <div className="userInfoBox">
             <div className="userInfo">
               <p className="userName">
-                {appState.accountInfo.name
+                {appState.accountInfo
                   ? appState.accountInfo.name
                   : "User"}
               </p>
               <p className="userPosition">
-                {appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}
+                {appState.accountInfo && appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}
               </p>
             </div>
             <div className="logoutButtonBox">
