@@ -1,20 +1,23 @@
 .sidebar{
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    width: 260px;
 }
 
 .systemNameBox {
     max-width: 360px;
-    height: 180px;
+    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #1c81d9;
     padding: 24px;
-    border-bottom: 2px solid #f7f9fc;
+    box-shadow: 2px 6px 4px 0px rgba(148,148,148,0.2);
 }
 
 .systemName {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 400;
     color: #fff;
     user-select: none;
@@ -23,16 +26,20 @@
 
 .sidebarMenuBox {
     padding: 15px;
+    flex: 2;
+    box-shadow: 4px 0px 4px 0px rgba(148,148,148,0.3);
+    z-index: 10;
 }
 
 
 .itemBox {
     width: 100%;
-    height: 60px;
+    height: 40px;
     display: flex;
     align-items: center;
     padding-left: 16px;
-    border-radius: 100px;
+    border-radius: 20px;
+    margin-bottom: 8px;
 }
 
 .itemBox i {
@@ -40,11 +47,12 @@
     height: 20px;
     display: flex;
     align-items: center;
+    color: #54667A;
 }
 
 .itemBox:hover i,
 .itemBox:hover .itemName{
-    color: #0c8ce9;
+    color: #26c6da;
 }
 
 .itemBox a {
@@ -59,23 +67,26 @@
 .itemBox.active{
     width: "100%";
     height: "100%";
+    color: #fff;
+    background-color: #26c6da;
+    box-shadow: 0 0 10px rgb(0 0 0 / 20%);
     transition: all ease-in 0.5s;
 }
 
-.itemBox:hover.active i{
-    color: blue;
+.itemBox.active i{
+    color: #fff;
 }
 
 .itemBox.active a{
-    color: blue;
+    color: #fff;
     transition: all ease-in 0.3s;
 }
 
 .itemBox.active .itemName{
-    color: blue;
+    color: #fff;
 }
 
 .itemName{
-    color: #000;
+    color: #54667A;
     margin-left: 12px;
 }

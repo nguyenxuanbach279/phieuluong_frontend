@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 const login = (email, password) => {
-  return api.get("Token", {
+  return api.get("Account", {
     params: { email: email, pass: password },
   });
 };

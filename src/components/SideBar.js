@@ -39,7 +39,7 @@ export default function SideBar() {
   return (
     <div className="sidebar">
       <div className="systemNameBox">
-        <p className="systemName">Hệ thống phiếu lương</p>
+        <p className="systemName">Hệ thống ABC</p>
       </div>
       <div className="sidebarMenuBox">
         {menuItem.map((item, index) => {

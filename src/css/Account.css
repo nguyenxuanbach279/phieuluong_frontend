@@ -10,15 +10,27 @@
     justify-content: space-between;
     align-items: center;
     height: 70px;
+    padding: 0 24px;
 }
 
 .accountListTitle {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 700;
     user-select: none;
 }
 
-.form-control{
+.accountContentBox {
+    padding: 24px;
+    background-color: #edf4f8;
+    flex: 2;
+}
+
+.accountTable{
+    background-color: #fff;
+    padding: 20px 20px 8px;
+}
+
+.form-control {
     width: 400px !important;
 }
 

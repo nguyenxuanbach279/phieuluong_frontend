@@ -9,7 +9,7 @@ import { AppContext } from "../contexts/app.context";
 import { useNavigate } from "react-router-dom";
 
 export default function Account() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [employeeList, setEmployeeList] = useState([]);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -51,8 +51,8 @@ export default function Account() {
   };
 
   const onClickCreateAccount = () => {
-    navigate("/account/create")
-  }
+    navigate("/account/create");
+  };
 
   return (
     <div className="accountListContainer">
@@ -67,48 +67,52 @@ export default function Account() {
           className="keySearchInput"
         />
       </div>
-      <Table>
-        <thead>
-          <tr>
-            <th>MSNV</th>
-            <th>Họ tên</th>
-            <th>Email</th>
-            <th>Chức vụ</th>
-            <th>Phòng ban</th>
-            <th>Chi tiết</th>
-            <th>Xóa</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employeeList.map((employee) => {
-            return (
-              <tr key={employee.id}>
-                <td>{employee.employeeCode}</td>
-                <td>{employee.name}</td>
-                <td>{employee.email}</td>
-                <td>{employee.currentLevel}</td>
-                <td>Kế toán</td>
-                <td>
-                  <BsThreeDotsVertical />
-                </td>
-                <td>
-                  <RiDeleteBin6Line />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      <div className="accountContentBox">
+        <div className="accountTable">
+        <Table>
+          <thead>
+            <tr>
+              <th>MSNV</th>
+              <th>Họ tên</th>
+              <th>Email</th>
+              <th>Chức vụ</th>
+              <th>Phòng ban</th>
+              <th>Chi tiết</th>
+              <th>Xóa</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeeList.map((employee) => {
+              return (
+                <tr key={employee.id}>
+                  <td>{employee.employeeCode}</td>
+                  <td>{employee.name}</td>
+                  <td>{employee.email}</td>
+                  <td>{employee.currentLevel}</td>
+                  <td>Kế toán</td>
+                  <td>
+                    <BsThreeDotsVertical />
+                  </td>
+                  <td>
+                    <RiDeleteBin6Line />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+        </div>
 
-      <div className="footerAccountPage">
-        <Pagination
-          count={Math.ceil(totalEmployee / pageSize)}
-          variant="outlined"
-          page={pageNumber}
-          shape="rounded"
-          onChange={onChangePage}
-        />
-        <Button onClick={onClickCreateAccount}>Tạo tài khoản</Button>
+        <div className="footerAccountPage">
+          <Pagination
+            count={Math.ceil(totalEmployee / pageSize)}
+            variant="outlined"
+            page={pageNumber}
+            shape="rounded"
+            onChange={onChangePage}
+          />
+          <Button onClick={onClickCreateAccount}>Tạo tài khoản</Button>
+        </div>
       </div>
     </div>
   );

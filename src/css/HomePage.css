@@ -15,17 +15,17 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 90px;
+    height: 70px;
+    box-shadow: 2px 6px 4px 0px rgba(148,148,148,0.2);
 }
 
 .userInfoBox {
     display: flex;
     width: 100%;
-    height: 90px;
+    height: 70px;
     justify-content: flex-end;
     align-items: center;
     background-color: #1e88e5;
-    border-bottom: 2px solid #f7f9fc;
 }
 
 .userInfo {
@@ -91,6 +91,6 @@
 }
 
 .mainContent{
-    padding: 20px;
+    padding: 24px 0;
     flex: 2;
 }

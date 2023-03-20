@@ -34,9 +34,7 @@ export default function HomePage() {
 
   return (
     <div className="homeContainer">
-      <div className="sidebarBox">
-        <SideBar />
-      </div>
+      <SideBar />
       <div className="contentBox">
         <div className="userbox">
           <div className="userInfoBox">
