@@ -48,6 +48,7 @@
     display: flex;
     align-items: center;
     color: #54667A;
+    user-select: none;
 }
 
 .itemBox:hover i,
@@ -62,6 +63,7 @@
     align-items: center;
     color: #000;
     font-size: 20px;
+    user-select: none;
 }
 
 .itemBox.active{
