@@ -14,12 +14,14 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import AppContextProvider from "./contexts/app.context";
 import { ToastContainer } from "react-toastify";
+import ForgotPassword from "./page/ForgotPassword";
 
 function App() {
   return (
     <AppContextProvider>
       <Routes>
         <Route exact path="/login" element={<LoginPage />} />
+        <Route exact path="/forgotPassword" element={<ForgotPassword />} />
         <Route exact path="/" element={<HomePage />}>
           <Route exact path="/account" element={<Account />} />
           <Route exact path="/account/create" element={<CreateAccount />} />

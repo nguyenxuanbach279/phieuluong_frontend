@@ -78,6 +78,15 @@ const updateAccount = (jwtToken, data) => {
   });
 };
 
+const forgotPassword = (jwtToken, email) => {
+  return api.get(`Account/recoverPassword/${email}`, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
@@ -86,5 +95,6 @@ export default {
   createNewAccount,
   deleteAccount,
   deleteEmployee,
-  updateAccount
+  updateAccount,
+  forgotPassword,
 };

@@ -9,6 +9,7 @@
 }
 
 .loginBox {
+    position: relative;
     min-width: 500px;
     background-color: #fff;
     padding: 65px 55px 55px;
@@ -92,16 +93,17 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    user-select: none;
 }
 
-.forgotPasswordBox a {
+.forgotPasswordBox p {
     text-decoration: none;
     color: #000;
     font-size: 16px;
     user-select: none;
 }
 
-.forgotPasswordBox a:hover {
+.forgotPasswordBox p:hover {
     color: #a64bf4
 }
 

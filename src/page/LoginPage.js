@@ -62,11 +62,15 @@ function LoginPage() {
     }
   };
 
+  const clickForgotPassword = () => {
+    navigate("/forgotPassword")
+  }
+
   return (
     <div className="loginPageContainer">
       <div className="loginBox">
         <div className="loginTitleBox">
-          <p className="loginTitle">Login</p>
+          <p className="loginTitle">Đăng nhập</p>
         </div>
         <Formik
           validationSchema={loginSchema}
@@ -79,7 +83,7 @@ function LoginPage() {
           {({ handleSubmit, handleChange, values, errors, touched }) => (
             <Form noValidate className="formLoginBox">
               <Form.Group className="inputBox" controlId="validationFormik01">
-                <Form.Label>Email address</Form.Label>
+                <Form.Label>Địa chỉ Email</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
                     <FiMail />
@@ -89,7 +93,7 @@ function LoginPage() {
                     type="email"
                     value={values.email}
                     onChange={handleChange}
-                    placeholder="Type your email"
+                    placeholder="Nhập địa chỉ email"
                     // isValid={touched.email && !errors.email}
                     // isInvalid={!!errors.email}
                   />
@@ -102,7 +106,7 @@ function LoginPage() {
                 className="inputBox passwordBox"
                 controlId="validationFormik02"
               >
-                <Form.Label>Password</Form.Label>
+                <Form.Label>Mật khẩu</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>
                     <FiKey />
@@ -112,7 +116,7 @@ function LoginPage() {
                     type={isShowPassword ? "text" : "password"}
                     onChange={handleChange}
                     value={values.password}
-                    placeholder="Type your Password"
+                    placeholder="Nhập mật khẩu"
                     autoComplete="off"
                     // isValid={touched.password && !errors.password}
                     // isInvalid={!!errors.password}
@@ -125,10 +129,10 @@ function LoginPage() {
                   {isShowPassword ? <MdVisibility /> : <MdOutlineVisibility />}
                 </i>
               </Form.Group>
-              <div className="forgotPasswordBox">
-                <a href="/login" className="forgotPasswordText">
-                  Forgot password?
-                </a>
+              <div className="forgotPasswordBox" onClick={() => clickForgotPassword()}>
+                <p className="forgotPasswordText">
+                  Quên mật khẩu?
+                </p>
               </div>
               <div className="loginButtonBox">
                 <div className="btnBg"></div>
@@ -137,7 +141,7 @@ function LoginPage() {
                   className="loginButton"
                   onClick={handleSubmit}
                 >
-                  Login
+                  Đăng nhập
                 </button>
               </div>
             </Form>
