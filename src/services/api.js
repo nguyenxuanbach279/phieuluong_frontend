@@ -69,6 +69,15 @@ const deleteEmployee = (jwtToken, id) => {
   });
 };
 
+const updateAccount = (jwtToken, data) => {
+  return api.put("Account/update", data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
@@ -77,4 +86,5 @@ export default {
   createNewAccount,
   deleteAccount,
   deleteEmployee,
+  updateAccount
 };
