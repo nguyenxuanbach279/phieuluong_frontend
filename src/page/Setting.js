@@ -5,29 +5,102 @@ import { Formik } from "formik";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import { AppContext } from "../contexts/app.context";
+import api from "../services/api";
 
-const SettingSchema = Yup.object().shape({
-  name: Yup.string().required(),
-  phone: Yup.string().required(),
-  oldPassword: Yup.string().min(2, "Too Short!").max(24, "Too Long!"),
+const changePasswordSchema = Yup.object().shape({
+  oldPassword: Yup.string()
+    .notRequired()
+    .nullable()
+    .min(2, "Too Short!")
+    .max(24, "Too Long!"),
   password: Yup.string()
+    .notRequired()
+    .nullable()
     .min(2, "Too Short!")
     .max(24, "Too Long!")
     .when("oldPassword", (oldPassword, field) =>
       oldPassword ? field.required() : field
     ),
-  confirmPassword: Yup.string().when("password", (password, field) =>
-    password ? field.required().oneOf([Yup.ref("password")]) : field
-  ),
+  confirmPassword: Yup.string()
+    .notRequired()
+    .nullable()
+    .when("password", (password, field) =>
+      password ? field.required().oneOf([Yup.ref("password")]) : field
+    ),
+});
+
+const changeUserInfoSchema = Yup.object().shape({
+  name: Yup.string().required(),
+  phone: Yup.string().required(),
 });
 
 export default function Setting() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const { appState, dispatch } = useContext(AppContext);
+
+  const [state, setState] = React.useState({
+    oldPassword: "",
+    password: "",
+    confirmPassword: "",
+    name: appState.accountInfo.name,
+    phone: "0123456789",
+  });
+
   const clickShowHidePassword = () => {
     setIsShowPassword((pre) => !pre);
   };
-  console.log(appState);
+
+  const handleSubmit = async (values) => {
+    const newData = {
+      name: values.name,
+      email: appState.accountInfo.email,
+      password:
+        values.password === ""
+          ? appState.accountInfo.password
+          : values.password,
+      isAdmin: appState.accountInfo.isAdmin,
+      createdBy: appState.accountInfo.createdBy,
+      modifiedBy: appState.accountInfo.name,
+    };
+
+    try {
+      const updateAccountRes = await api.updateAccount(appState.jwtToken, newData);
+      if (updateAccountRes.status === 200) {
+        const accountInfoRes = await api.getAccountInfo(
+          appState.jwtToken,
+          appState.accountInfo.email
+        );
+        const accountInfo = accountInfoRes.data.data;
+        dispatch({
+          type: "SET_ACCOUNT_INFO",
+          accountInfo: accountInfo,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const onChangeOldPassword = (e) => {
+  //   setState({ ...state, oldPassword: e.target.value });
+  // };
+
+  // const onChangePassword = (e) => {
+  //   setState({ ...state, password: e.target.value });
+  // };
+
+  // const onChangeConfirmPassword = (e) => {
+  //   setState({ ...state, confirmPassword: e.target.value });
+  // };
+
+  // const onChangeName = (e) => {
+  //   setState({ ...state, name: e.target.value });
+  // };
+
+  // const onChangePhone = (e) => {
+  //   setState({ ...state, phone: e.target.value });
+  // };
+
   return (
     <div className="settingContainer">
       <div className="settingTitleBox">
@@ -36,15 +109,9 @@ export default function Setting() {
 
       <div className="settingContent">
         <Formik
-          validationSchema={SettingSchema}
-          onSubmit={() => {}}
-          initialValues={{
-            oldPassword: "",
-            password: "",
-            confirmPassword: "",
-            name: appState.accountInfo.name,
-            phone: "0123456789",
-          }}
+          validationSchema={changePasswordSchema}
+          initialValues={state}
+          onSubmit={(values) => handleSubmit(values)}
         >
           {({ handleSubmit, handleChange, values, errors, touched }) => (
             <Form noValidate className="settingAccountBox">
@@ -57,10 +124,13 @@ export default function Setting() {
                       name="oldPassword"
                       type="password"
                       id="oldPassword"
+                      // value={state.oldPassword}
                       value={values.oldPassword}
+                      // onChange={onChangeOldPassword}
                       onChange={handleChange}
-                      isValid={touched.oldPassword && !errors.oldPassword}
+                      isValid={touched.password && !errors.oldPassword}
                       isInvalid={!!errors.oldPassword}
+                      autoComplete="current-password"
                     />
                     <Form.Control.Feedback type="invalid">
                       {errors.oldPassword}
@@ -74,6 +144,7 @@ export default function Setting() {
                       name="password"
                       type={isShowPassword ? "text" : "password"}
                       id="password"
+                      // onChange={onChangePassword}
                       onChange={handleChange}
                       value={values.password}
                       isValid={
@@ -82,6 +153,7 @@ export default function Setting() {
                         values.password === appState.accountInfo.password
                       }
                       isInvalid={!!errors.password && values.oldPassword}
+                      autoComplete="new-password"
                     />
                     <Form.Control.Feedback type="invalid">
                       {errors.password}
@@ -99,7 +171,7 @@ export default function Setting() {
                     )}
                   </div>
                 </Form.Group>
-                <Form.Group className="formRowBox" id="validationFormik01">
+                <Form.Group className="formRowBox" id="validationFormik03">
                   <Form.Label htmlFor="confirmPassword">
                     Nhập lại mật khẩu
                   </Form.Label>
@@ -109,17 +181,80 @@ export default function Setting() {
                       type="password"
                       id="confirmPassword"
                       value={values.confirmPassword}
+                      // value={state.confirmPassword}
+                      // onChange={onChangeConfirmPassword}
                       onChange={handleChange}
-                      // isValid={
-                      //   touched.confirmPassword && !errors.confirmPassword
-                      // }
+                      isValid={
+                        touched.confirmPassword && !errors.confirmPassword
+                      }
                       isInvalid={!!errors.confirmPassword && values.password}
+                      autoComplete="confirm-password"
                     />
                     <Form.Control.Feedback type="invalid">
                       {errors.confirmPassword}
                     </Form.Control.Feedback>
                   </InputGroup>
                 </Form.Group>
+                {/* <Form.Label>Thông tin cá nhân</Form.Label>
+                <Form.Group className="formRowBox" id="validationFormik01">
+                  <Form.Label htmlFor="name">Họ tên</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      name="name"
+                      type="text"
+                      id="name"
+                      // value={state.name}
+                      value={values.name}
+                      // onChange={onChangeName}
+                      onChange={handleChange}
+                      isValid={touched.name &&!errors.name}
+                      isInvalid={!!errors.name}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.name}
+                    </Form.Control.Feedback>
+                  </InputGroup>
+                </Form.Group>
+                <Form.Group className="formRowBox" id="validationFormik01">
+                  <Form.Label htmlFor="phone">Số điện thoại</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      name="phone"
+                      type="text"
+                      id="phone"
+                      // value={state.phone}
+                      value={values.phone}
+                      // onChange={onChangePhone}
+                      onChange={handleChange}
+                      isValid={touched.phone &&!errors.phone}
+                      isInvalid={!!errors.phone}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {errors.phone}
+                    </Form.Control.Feedback>
+                  </InputGroup>
+                </Form.Group> */}
+              </div>
+              <div className="buttonBox">
+                <Button
+                  type="submit"
+                  className="createAccountButton"
+                  onClick={handleSubmit}
+                >
+                  Lưu
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+        <Formik
+          validationSchema={changeUserInfoSchema}
+          initialValues={state}
+          onSubmit={(values) => handleSubmit(values)}
+        >
+          {({ handleSubmit, handleChange, values, errors, touched }) => (
+            <Form noValidate className="settingAccountBox">
+              <div className="formSettingAccount">
                 <Form.Label>Thông tin cá nhân</Form.Label>
                 <Form.Group className="formRowBox" id="validationFormik01">
                   <Form.Label htmlFor="name">Họ tên</Form.Label>
@@ -128,7 +263,9 @@ export default function Setting() {
                       name="name"
                       type="text"
                       id="name"
+                      // value={state.name}
                       value={values.name}
+                      // onChange={onChangeName}
                       onChange={handleChange}
                       isValid={touched.name && !errors.name}
                       isInvalid={!!errors.name}
@@ -145,7 +282,9 @@ export default function Setting() {
                       name="phone"
                       type="text"
                       id="phone"
+                      // value={state.phone}
                       value={values.phone}
+                      // onChange={onChangePhone}
                       onChange={handleChange}
                       isValid={touched.phone && !errors.phone}
                       isInvalid={!!errors.phone}
@@ -157,13 +296,6 @@ export default function Setting() {
                 </Form.Group>
               </div>
               <div className="buttonBox">
-                <Button
-                  type="submit"
-                  className="createAccountButton"
-                  onClick={handleSubmit}
-                >
-                  Hủy
-                </Button>
                 <Button
                   type="submit"
                   className="createAccountButton"
