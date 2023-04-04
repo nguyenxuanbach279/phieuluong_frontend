@@ -6,6 +6,7 @@ import "../css/CreateAccount.css";
 import * as Yup from "yup";
 import { AppContext } from "../contexts/app.context";
 import api from "../services/api";
+import { toast } from "react-toastify";
 
 const createAccountSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -35,9 +36,18 @@ export default function CreateAccount() {
       modifiedBy: appState.accountInfo.name,
     };
     try {
-      const createNewAccountRes = await api.createNewAccount(appState.jwtToken, newAccount);
+      const createNewAccountRes = await api.createNewAccount(
+        appState.jwtToken,
+        newAccount
+      );
+      if (createNewAccountRes.data.status === 200) {
+        toast.success(createNewAccountRes.data.message);
+      } else {
+        toast.error(createNewAccountRes.data.message);
+      }
+      console.log(createNewAccountRes);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
