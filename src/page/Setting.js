@@ -6,6 +6,15 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import { AppContext } from "../contexts/app.context";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 const changePasswordSchema = Yup.object().shape({
   oldPassword: Yup.string()
@@ -35,8 +44,15 @@ const changeUserInfoSchema = Yup.object().shape({
 });
 
 export default function Setting() {
+  const navigate = useNavigate();
   const [isShowPassword, setIsShowPassword] = useState(false);
   const { appState, dispatch } = useContext(AppContext);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const [state, setState] = React.useState({
     oldPassword: "",
@@ -64,21 +80,37 @@ export default function Setting() {
     };
 
     try {
-      const updateAccountRes = await api.updateAccount(appState.jwtToken, newData);
+      const updateAccountRes = await api.updateAccount(
+        appState.jwtToken,
+        newData
+      );
       if (updateAccountRes.status === 200) {
-        const accountInfoRes = await api.getAccountInfo(
-          appState.jwtToken,
-          appState.accountInfo.email
-        );
-        const accountInfo = accountInfoRes.data.data;
-        dispatch({
-          type: "SET_ACCOUNT_INFO",
-          accountInfo: accountInfo,
-        });
+        if (values.password !== "") {
+          toast.success("Cập nhập mật khẩu thành công");
+          setOpen(true);
+        } else {
+          const accountInfoRes = await api.getAccountInfo(
+            appState.jwtToken,
+            appState.accountInfo.email
+          );
+          const accountInfo = accountInfoRes.data.data;
+          dispatch({
+            type: "SET_ACCOUNT_INFO",
+            accountInfo: accountInfo,
+          });
+          toast.success("Cập nhập thành công");
+        }
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const loginAgain = () => {
+    navigate("/login");
+    dispatch({
+      type: "RESET_STATE",
+    });
   };
 
   // const onChangeOldPassword = (e) => {
@@ -267,7 +299,7 @@ export default function Setting() {
                       value={values.name}
                       // onChange={onChangeName}
                       onChange={handleChange}
-                      isValid={touched.name && !errors.name}
+                      // isValid={touched.name && !errors.name}
                       isInvalid={!!errors.name}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -286,7 +318,7 @@ export default function Setting() {
                       value={values.phone}
                       // onChange={onChangePhone}
                       onChange={handleChange}
-                      isValid={touched.phone && !errors.phone}
+                      // isValid={touched.phone && !errors.phone}
                       isInvalid={!!errors.phone}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -308,6 +340,25 @@ export default function Setting() {
           )}
         </Formik>
       </div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Yêu cầu đăng nhập lại</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Mật khẩu cập nhập thành công. Bạn có muốn đăng nhập lại?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Không</Button>
+          <Button onClick={loginAgain} autoFocus>
+            Đồng ý
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

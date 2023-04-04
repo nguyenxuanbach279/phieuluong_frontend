@@ -26,8 +26,9 @@
 }
 
 .employeeTable{
+    width: 100%;
     background-color: #fff;
-    padding: 20px 20px 8px;
+    padding: 10px 20px 8px;
 }
 
 .form-control {
@@ -38,4 +39,9 @@
     display: flex;
     justify-content: space-between;
     margin-top: 12px;
+    align-items: center;
+}
+
+.employeeTable .css-y8ay40-MuiTableCell-root,.employeeTable .css-1ex1afd-MuiTableCell-root{
+    padding: 4px;
 }

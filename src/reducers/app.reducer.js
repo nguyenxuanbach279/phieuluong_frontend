@@ -3,6 +3,7 @@ const initialState = {
   loginUser: null,
   indexItem: 0,
   accountInfo: null,
+  employeeIdEdit: null,
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -26,6 +27,11 @@ export const appReducer = (state = initialState, action) => {
       return {
         ...state,
         accountInfo: action.accountInfo,
+      };
+    case "SET_EMPLOYEEID_EDIT":
+      return {
+        ...state,
+        employeeIdEdit: action.employeeIdEdit,
       };
     case "RESET_STATE":
       return initialState;

@@ -12,7 +12,7 @@ const login = (email, password) => {
 };
 
 const getEmployeeList = (jwtToken, page, size, search) => {
-  return api.post("Employee/filter", search, {
+  return api.post("Employee/filter", JSON.stringify(search), {
     params: { pageNumber: page ? page : 1, pageSize: size },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
@@ -50,7 +50,7 @@ const createNewAccount = (jwtToken, newAccountInfo) => {
 };
 
 const deleteAccount = (jwtToken, email) => {
-  return api.get(`Account/${email}`, {
+  return api.delete(`Admin/${email}`, {
     params: { email: email },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
@@ -60,7 +60,7 @@ const deleteAccount = (jwtToken, email) => {
 };
 
 const deleteEmployee = (jwtToken, id) => {
-  return api.get(`Account/${id}`, {
+  return api.delete("Employee/id", {
     params: { id: id },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
@@ -78,8 +78,35 @@ const updateAccount = (jwtToken, data) => {
   });
 };
 
-const forgotPassword = (jwtToken, email) => {
+const forgotPassword = (email) => {
   return api.get(`Account/recoverPassword/${email}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getInfoEmployee = (jwtToken, id) => {
+  return api.get("Employee/detail", {
+    params: { employeeCode: id },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const updateInfoEmployee = (jwtToken, data) => {
+  return api.put("Employee/update", data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const createEmployee = (jwtToken, data) => {
+  return api.post("Employee/insert", data, {
     headers: {
       Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
@@ -97,4 +124,7 @@ export default {
   deleteEmployee,
   updateAccount,
   forgotPassword,
+  getInfoEmployee,
+  updateInfoEmployee,
+  createEmployee
 };

@@ -1,0 +1,50 @@
+.salaryViewContainer{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.salaryViewTitle{
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.salaryViewBox {
+    background-color: #fff;
+    width: 800px;
+    padding: 20px 60px;
+}
+
+.employeeName{
+   margin-top: 8px;
+}
+
+.salaryDetail{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.salaryDetail p{
+    font-size: 18px;
+    line-height: 32px;
+}
+
+.totalSalary{
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.salaryViewActions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    column-gap: 20px;
+}

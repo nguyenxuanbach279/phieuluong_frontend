@@ -16,8 +16,7 @@ function SideBar() {
     });
   };
 
-
-  const menuItem = [
+  const menuItemAdmin = [
     {
       path: "/appointment",
       name: "Đặt lịch",
@@ -40,29 +39,72 @@ function SideBar() {
     },
   ];
 
+  const menuItemAccountant = [
+    {
+      path: "/appointment",
+      name: "Đặt lịch",
+      icon: <BsCalendar3 />,
+    },
+    {
+      path: "/history",
+      name: "Lịch sử",
+      icon: <BiHistory />,
+    },
+    {
+      path: "/setting",
+      name: "Cài đặt tài khoản",
+      icon: <AiOutlineSetting />,
+    },
+  ];
+
   return (
     <div className="sidebar">
       <div className="systemNameBox">
         <p className="systemName">Hệ thống ABC</p>
       </div>
       <div className="sidebarMenuBox">
-        {menuItem.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className={appState.indexItem === index ? "itemBox active" : "itemBox"}
-              onClick={() => onClickItem(index)}
-            >
-              <Link to={item.path}>
-                <i>{item.icon}</i>
-                <div className="itemName">{item.name}</div>
-              </Link>
-            </div>
-          );
-        })}
+        {appState.accountInfo.isAdmin == 1 ? (
+          <>
+            {menuItemAdmin.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className={
+                    appState.indexItem === index ? "itemBox active" : "itemBox"
+                  }
+                  onClick={() => onClickItem(index)}
+                >
+                  <Link to={item.path}>
+                    <i>{item.icon}</i>
+                    <div className="itemName">{item.name}</div>
+                  </Link>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <>
+            {menuItemAccountant.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className={
+                    appState.indexItem === index ? "itemBox active" : "itemBox"
+                  }
+                  onClick={() => onClickItem(index)}
+                >
+                  <Link to={item.path}>
+                    <i>{item.icon}</i>
+                    <div className="itemName">{item.name}</div>
+                  </Link>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-export default SideBar
+export default SideBar;
