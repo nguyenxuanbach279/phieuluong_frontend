@@ -15,6 +15,9 @@ export default function HomePage() {
     if (appState == null || appState.loginUser == null) {
       navigate("/login");
     }
+    else{
+      navigate("/appointment");
+    }
   }, []);
 
   const onLogout = () => {

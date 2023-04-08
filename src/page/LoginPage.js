@@ -38,7 +38,7 @@ function LoginPage() {
     try {
       const loginDataRes = await api.login(values.email, values.password);
       const userDecode = loginDataRes.data.data;
-      const user = jwtDecode(loginDataRes.data.data);
+      const user = jwtDecode(loginDataRes.data.data); 
       dispatch({
         type: "SET_JWT_TOKEN_ACTION",
         jwtToken: userDecode,
@@ -49,7 +49,7 @@ function LoginPage() {
         loginUser: user,
       });
 
-      const accountInfoRes = await api.getAccountInfo(userDecode, user.Email);
+      const accountInfoRes = await api.getAccountInfo(userDecode, user.SSID);
       const accountInfo = accountInfoRes.data.data;
       dispatch({
         type: "SET_ACCOUNT_INFO",

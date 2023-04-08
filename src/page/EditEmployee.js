@@ -23,14 +23,13 @@ export default function EditEmployee() {
   const { appState, dispatch } = useContext(AppContext);
   const params = useParams();
   const location = useLocation();
-  console.log(location);
   const { id } = params;
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [employeeName, setEmployeeName] = useState("");
   const [employeeCode, setEmployeeCode] = useState("");
   const [employeeEmail, setEmployeeEmail] = useState("");
   const [employeePhone, setEmployeePhone] = useState("");
-  const [employeeDepartmentID, setEmployeeDepartmentID] = useState(-1);
+  const [employeeDepartmentID, setEmployeeDepartmentID] = useState(1);
 
   const [employeePosition, setEmployeePosition] = useState("");
   const [employeeSalary, setEmployeeSalary] = useState("");
@@ -41,7 +40,6 @@ export default function EditEmployee() {
   const [employeeDoB, setEmployeeDoB] = useState("");
   const [salaryMonth, setSalaryMonth] = useState(1);
   const [taxFee, setTaxFee] = useState("");
-
   const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState("");
 
   const departments = [
@@ -53,6 +51,8 @@ export default function EditEmployee() {
     "Bán hàng",
     "Hành chính",
   ];
+
+
 
   const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -147,12 +147,14 @@ export default function EditEmployee() {
   };
 
   const onChangeEmployeeEmail = (e) => {
-    setEmployeeEmail(e.target.value)
-  }
+    setEmployeeEmail(e.target.value);
+  };
+
+  console.log(employeeDetail)
 
   const clickSaveEmployeeInfo = async () => {
     const data = {
-      id: employeeDetail.id || "abc",
+      id: employeeDetail.id || `abc${Math.floor(Math.random() * 1000000)}`,
       name: employeeName,
       doB: employeeDoB,
       email: employeeEmail,
@@ -196,7 +198,7 @@ export default function EditEmployee() {
       console.log(error);
     }
   };
-
+  console.log(employeeDetail);
   return (
     <div className="editEmployeeContainer">
       <div className="editEmployeeTitleBox">
@@ -323,39 +325,6 @@ export default function EditEmployee() {
                 onChange={onChangePhone}
               />
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Thuế TNCN</Typography>
-              <TextField
-                value={taxFee}
-                type="text"
-                style={{ width: 200 }}
-                onChange={onChangeTaxFee}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">VNĐ</InputAdornment>
-                  ),
-                }}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Phòng ban</Typography>
-              <FormControl style={{ width: 200 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={employeeDepartmentID}
-                  onChange={onChangeDepartmentID}
-                >
-                  {departments.map((item, index) => {
-                    return (
-                      <MenuItem value={index + 1} key={item}>
-                        {item}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Stack>
           </Stack>
 
           <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
@@ -395,7 +364,7 @@ export default function EditEmployee() {
                 onChange={onChangeInsurance}
               />
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
+            {/* <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Tháng</Typography>
               <FormControl style={{ width: 200 }}>
                 <Select
@@ -413,7 +382,7 @@ export default function EditEmployee() {
                   })}
                 </Select>
               </FormControl>
-            </Stack>
+            </Stack> */}
 
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Trạng thái</Typography>
@@ -424,20 +393,44 @@ export default function EditEmployee() {
                   value={employeeStatusPaycheck}
                   onChange={onChangeStatusPaycheck}
                 >
-                  <MenuItem value="1">Xác nhận</MenuItem>
-                  <MenuItem value="0">Chưa xác nhận</MenuItem>
+                  <MenuItem value="1">Đang làm</MenuItem>
+                  <MenuItem value="2">Nghỉ việc</MenuItem>
+                  <MenuItem value="3">Nghỉ thai sản</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Phản hồi</Typography>
+              <Typography className="editEmployeeInfo">Thuế TNCN</Typography>
               <TextField
-                placeholder="Phản hồi của nhân viên"
-                multiline
-                rows={6}
-                maxRows={20}
-                sx={{ width: 420 }}
+                value={taxFee}
+                type="text"
+                style={{ width: 200 }}
+                onChange={onChangeTaxFee}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">VNĐ</InputAdornment>
+                  ),
+                }}
               />
+            </Stack>
+            <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Typography className="editEmployeeInfo">Phòng ban</Typography>
+              <FormControl style={{ width: 200 }}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={employeeDepartmentID}
+                  onChange={onChangeDepartmentID}
+                >
+                  {departments.map((item, index) => {
+                    return (
+                      <MenuItem value={index + 1} key={item}>
+                        {item}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </Stack>
           </Stack>
         </div>

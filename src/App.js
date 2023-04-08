@@ -18,6 +18,7 @@ import ForgotPassword from "./page/ForgotPassword";
 import SalaryView from "./page/SalaryView";
 import { useContext } from "react";
 import EditEmployee from "./page/EditEmployee";
+import NotFound from "./page/NotFound";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route exact path="/appointment" element={<MakeAppointment />} />
           <Route exact path="/setting" element={<Setting />} />
         </Route>
+        <Route exact path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer
         autoClose={5000}

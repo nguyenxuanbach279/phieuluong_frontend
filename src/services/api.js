@@ -30,9 +30,9 @@ const getAccountList = (jwtToken) => {
   });
 };
 
-const getAccountInfo = (jwtToken, email) => {
-  return api.get(`Account/${email}`, {
-    params: { email: email },
+const getAccountInfo = (jwtToken, id) => {
+  return api.get(`Account/${id}`, {
+    params: { id: id },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const forgotPassword = (email) => {
 
 const getInfoEmployee = (jwtToken, id) => {
   return api.get("Employee/detail", {
-    params: { employeeCode: id },
+    params: { id: id },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
@@ -114,6 +114,42 @@ const createEmployee = (jwtToken, data) => {
   });
 };
 
+const sendPaycheckNow = (jwtToken, data) => {
+  return api.post("Schedule/sendNow", data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const sendPaycheckSetCalendar = (jwtToken, data) => {
+  return api.post("Schedule/setCalendar", data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const uploadExcel = (jwtToken, data) => {
+  return api.post("Employee/excel", data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+const updateEmployeePayCheckStatus = (id, value) => {
+  return api.post(`Employee/update?ID=${id}&value=${value}`, {
+    // params: { ID: id, value: value },
+    headers: {
+      "accept": "text/plain",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
@@ -126,5 +162,9 @@ export default {
   forgotPassword,
   getInfoEmployee,
   updateInfoEmployee,
-  createEmployee
+  createEmployee,
+  sendPaycheckNow,
+  uploadExcel,
+  sendPaycheckSetCalendar,
+  updateEmployeePayCheckStatus
 };

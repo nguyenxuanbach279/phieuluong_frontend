@@ -45,3 +45,7 @@
 .employeeTable .css-y8ay40-MuiTableCell-root,.employeeTable .css-1ex1afd-MuiTableCell-root{
     padding: 4px;
 }
+
+#demo-simple-select{
+    padding: 8px 8px 8px 12px;   
+}

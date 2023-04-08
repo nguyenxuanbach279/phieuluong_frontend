@@ -13,18 +13,20 @@
 }
 
 .salaryViewBox {
+    border-radius: 20px;
     background-color: #fff;
-    width: 800px;
+    width: 1000px;
     padding: 20px 60px;
 }
 
 .employeeName{
    margin-top: 8px;
+   font-size: 20px;
 }
 
 .salaryDetail{
     display: flex;
-    justify-content: space-between;
+    column-gap: 100px;
     margin-top: 20px;
 }
 
@@ -47,4 +49,8 @@
     align-items: center;
     margin-top: 20px;
     column-gap: 20px;
+}
+
+.salaryviewInfo{
+    width: 160px;
 }
