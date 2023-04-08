@@ -26,7 +26,7 @@ export default function Account() {
   const navigate = useNavigate();
   const [accountList, setAccountList] = useState([]);
   const [keySearch, setKeySearch] = useState("");
-  const [accountPrepareDelete, setAccountPrepareDelete] = useState([]);
+  const [accountPrepareDelete, setAccountPrepareDelete] = useState({});
   const { appState, dispatch } = useContext(AppContext);
   const [open, setOpen] = useState(false);
 
@@ -36,7 +36,12 @@ export default function Account() {
   };
 
   useEffect(() => {
-    getAccountList();
+    if(appState.accountInfo.isAdmin == 1){
+      getAccountList();
+    }
+    else{
+      toast.error("Bạn cần cấp quyền")
+    }
   }, [keySearch]);
 
   const getAccountList = async () => {

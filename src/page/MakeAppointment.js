@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Button, Form, FormControl, Modal } from "react-bootstrap";
+import { Form, FormControl, Modal } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "../css/Account.css";
@@ -27,12 +27,20 @@ import {
   DialogContentText,
   DialogActions,
   TextField,
+  Button,
+  IconButton,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
-import { VscPreview } from "react-icons/vsc";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import moment from "moment/moment";
 
 export default function MakeAppointment() {
   const navigate = useNavigate();
@@ -48,9 +56,17 @@ export default function MakeAppointment() {
   const [selected, setSelected] = useState([]);
   const [mailInTable, setMailInTable] = useState([]);
   const [employeeEdit, setEmployeeEdit] = useState({});
-
+  const [datetime, setDatetime] = useState(dayjs(new Date()));
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
+
+  const [employeePrepareDelete, setEmployeePrepareDelete] = useState({});
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setEmployeePrepareDelete({});
+    setOpen(false);
+  };
 
   useEffect(() => {
     getEmployeeList(1);
@@ -65,6 +81,8 @@ export default function MakeAppointment() {
     "Bán hàng",
     "Hành chính",
   ];
+
+  const paycheck = ["Chưa gửi", "Đã gửi", "Xác nhận", "Không xác nhận"];
 
   const getEmployeeList = async (page) => {
     try {
@@ -87,28 +105,45 @@ export default function MakeAppointment() {
     }
   };
 
-  console.log(employeeList  )
-
   const onChangePage = (event, page) => {
     setPageNumber(page);
     getEmployeeList(page);
+    setSelected([]);
   };
 
   const onChangeKeySearch = (e) => {
     setKeySearch(e.target.value.toString());
   };
 
-  const clickDeleteEmployee = async (employee) => {
+  const clickPrepareDeleteEmployee = (employee) => {
+    setOpen(true);
+    setEmployeePrepareDelete(employee);
+  };
+
+  const clickDeleteEmployee = async () => {
     try {
       const deleteEmployeeRes = await api.deleteEmployee(
         appState.jwtToken,
-        employee.id
+        employeePrepareDelete.id
       );
-      getEmployeeList(pageNumber);
+      if (deleteEmployeeRes.status === 200) {
+        setOpen(false);
+        toast.success("Xóa thành công");
+        getEmployeeList(pageNumber);
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  const employeeListChoosed = useCallback(() => {
+    const temp = employeeList.filter((item) => {
+      if (selected.includes(item.email)) {
+        return item;
+      }
+    });
+    return temp;
+  }, [selected, employeeList]);
 
   const handleChangePageSize = (event) => {
     setPageSize(event.target.value);
@@ -147,6 +182,66 @@ export default function MakeAppointment() {
     navigate("/employee/create");
   };
 
+  const clickSendPaycheck = async () => {
+    const data = employeeListChoosed();
+    if (typeOfAppointment == "Gửi luôn") {
+      try {
+        const sendNowRes = await api.sendPaycheckNow(appState.jwtToken, data);
+        if (sendNowRes.status === 200) {
+          toast.success("Gửi thành công");
+          setShowModal(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      const time = datetime["$d"];
+      const formatString = "YYYY-MM-DDTHH:mm:00";
+      const result = moment(
+        time,
+        "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)"
+      ).format(formatString);
+      const temp = data.map((item) => {
+        return { idEmployee: item.id, sendDate: result };
+      });
+      try {
+        const sendNowRes = await api.sendPaycheckSetCalendar(
+          appState.jwtToken,
+          temp
+        );
+        if (sendNowRes.status === 200) {
+          toast.success("Đặt lịch thành công");
+          setShowModal(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const onChangeFile = async (e) => {
+    const temp = e.target.files;
+    // console.log(Object.values(temp));
+
+    const data = new FormData();
+    Object.values(temp).forEach((file) => {
+      data.append("fileExcel", file);
+    });
+    console.log(data);
+    try {
+      const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
+      if (uploadFileRes.status === 200) {
+        console.log(uploadFileRes);
+        toast.success("Upload thành công");
+      }
+    } catch (error) {
+      toast.error("error");
+      console.log(error);
+    }
+  };
+
+  // console.log(datetime["$d"].toISOString());
+
   return (
     <>
       <div className="employeeListContainer">
@@ -162,6 +257,8 @@ export default function MakeAppointment() {
               className="keySearchInput"
             />
             <Button
+              variant="contained"
+              component="label"
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -169,7 +266,15 @@ export default function MakeAppointment() {
                 columnGap: 4,
               }}
             >
-              Upload File <AiOutlineUpload />
+              Upload
+              <input
+                hidden
+                accept=".csv,application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                multiple
+                type="file"
+                onChange={onChangeFile}
+              />
+              <AiOutlineUpload />
             </Button>
           </div>
         </div>
@@ -204,9 +309,6 @@ export default function MakeAppointment() {
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                       Phòng ban
                     </TableCell>
-                    {/* <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                      Lương
-                    </TableCell> */}
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                       Tháng
                     </TableCell>
@@ -233,9 +335,9 @@ export default function MakeAppointment() {
                       >
                         <TableCell>
                           <Checkbox
-                            value={employee.employeeCode}
+                            value={employee.email}
                             onChange={onChangeValue}
-                            checked={selected.includes(employee.employeeCode)}
+                            checked={selected.includes(employee.email)}
                             style={{ width: 20 }}
                           />
                         </TableCell>
@@ -254,9 +356,6 @@ export default function MakeAppointment() {
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           {departmants[employee.departmentID - 1]}
                         </TableCell>
-                        {/* <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          1000000
-                        </TableCell> */}
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           {employee.month}
                         </TableCell>
@@ -270,7 +369,7 @@ export default function MakeAppointment() {
                             padding: "4px",
                           }}
                         >
-                          Xác nhận
+                          {paycheck[employee.statusPaycheck]}
                         </TableCell>
                         <TableCell
                           sx={{ textAlign: "center", padding: "4px" }}
@@ -279,9 +378,11 @@ export default function MakeAppointment() {
                           <BsThreeDotsVertical />
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          <RiDeleteBin6Line
-                            onClick={() => clickDeleteEmployee(employee)}
-                          />
+                          <IconButton
+                            onClick={() => clickPrepareDeleteEmployee(employee)}
+                          >
+                            <RiDeleteBin6Line />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );
@@ -318,14 +419,14 @@ export default function MakeAppointment() {
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Button
-                variant="primary"
+                variant="contained"
                 onClick={clickCreateEmployeePage}
                 style={{ minWidth: 120, height: 50 }}
               >
                 Thêm nhân viên
               </Button>
               <Button
-                variant="primary"
+                variant="contained"
                 onClick={handleShowModal}
                 style={{ minWidth: 120, height: 50 }}
               >
@@ -360,14 +461,15 @@ export default function MakeAppointment() {
               />
               {typeOfAppointment === "Đặt lịch" ? (
                 <>
-                  <Form.Label>Ngày</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="duedate"
-                    placeholder="Due date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DateTimePicker"]}>
+                      <DateTimePicker
+                        label="Chọn ngày giờ"
+                        value={datetime}
+                        onChange={(newValue) => setDatetime(newValue)}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </>
               ) : (
                 <></>
@@ -377,21 +479,44 @@ export default function MakeAppointment() {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            variant="contained"
             onClick={handleCloseModal}
-            style={{ minWidth: 80 }}
+            style={{ minWidth: 80, marginRight: 8 }}
           >
             Hủy
           </Button>
           <Button
-            variant="primary"
-            onClick={handleCloseModal}
+            variant="contained"
+            onClick={clickSendPaycheck}
             style={{ minWidth: 80 }}
           >
             OK
           </Button>
         </Modal.Footer>
       </Modal>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Xác nhận xóa nhân viên
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn chắc chắn muốn xóa nhân viên {employeePrepareDelete.name} chứ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} style={{ minWidth: 100 }}>
+            Hủy
+          </Button>
+          <Button onClick={clickDeleteEmployee} autoFocus>
+            Xóa nhân viên
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

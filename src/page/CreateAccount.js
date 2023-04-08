@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import "../css/CreateAccount.css";
@@ -19,6 +19,12 @@ const createAccountSchema = Yup.object().shape({
 export default function CreateAccount() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const { appState, dispatch } = useContext(AppContext);
+
+  useEffect(() => {
+    if (appState.accountInfo.isAdmin == 0) {
+      toast.error("Bạn cần cấp quyền");
+    }
+  }, []);
 
   const clickShowHidePassword = () => {
     setIsShowPassword((pre) => !pre);
@@ -45,7 +51,6 @@ export default function CreateAccount() {
       } else {
         toast.error(createNewAccountRes.data.message);
       }
-      console.log(createNewAccountRes);
     } catch (error) {
       console.log(error);
     }
@@ -53,93 +58,97 @@ export default function CreateAccount() {
 
   return (
     <div className="accountContainer">
-      <div className="accountTitleBox">
-        <p className="accountTitle">Tạo tài khoản</p>
-      </div>
-      <div className="createAccountContent">
-        <Formik
-          validationSchema={createAccountSchema}
-          onSubmit={(values) => onClickCreateAccount(values)}
-          initialValues={{
-            email: "",
-            password: "",
-            position: "Kế toán",
-          }}
-        >
-          {({ handleSubmit, handleChange, values, errors, touched }) => (
-            <Form noValidate className="createAccountBox">
-              <div className="formCreateAccount">
-                <Form.Group className="formRowBox" id="validationFormik01">
-                  <Form.Label htmlFor="email">Email</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      name="email"
-                      type="email"
-                      id="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      isValid={touched.email && !errors.email}
-                      isInvalid={!!errors.email}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.email}
-                    </Form.Control.Feedback>
-                  </InputGroup>
-                </Form.Group>
-                <Form.Group className="formRowBox" id="validationFormik02">
-                  <Form.Label htmlFor="password">Mật khẩu</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      name="password"
-                      type={isShowPassword ? "text" : "password"}
-                      id="password"
-                      onChange={handleChange}
-                      value={values.password}
-                      isValid={touched.password && !errors.password}
-                      isInvalid={!!errors.password}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.password}
-                    </Form.Control.Feedback>
-                  </InputGroup>
+      {appState.accountInfo.isAdmin == 1 && (
+        <>
+          <div className="accountTitleBox">
+            <p className="accountTitle">Tạo tài khoản</p>
+          </div>
+          <div className="createAccountContent">
+            <Formik
+              validationSchema={createAccountSchema}
+              onSubmit={(values) => onClickCreateAccount(values)}
+              initialValues={{
+                email: "",
+                password: "",
+                position: "Kế toán",
+              }}
+            >
+              {({ handleSubmit, handleChange, values, errors, touched }) => (
+                <Form noValidate className="createAccountBox">
+                  <div className="formCreateAccount">
+                    <Form.Group className="formRowBox" id="validationFormik01">
+                      <Form.Label htmlFor="email">Email</Form.Label>
+                      <InputGroup>
+                        <Form.Control
+                          name="email"
+                          type="email"
+                          id="email"
+                          value={values.email}
+                          onChange={handleChange}
+                          isValid={touched.email && !errors.email}
+                          isInvalid={!!errors.email}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.email}
+                        </Form.Control.Feedback>
+                      </InputGroup>
+                    </Form.Group>
+                    <Form.Group className="formRowBox" id="validationFormik02">
+                      <Form.Label htmlFor="password">Mật khẩu</Form.Label>
+                      <InputGroup>
+                        <Form.Control
+                          name="password"
+                          type={isShowPassword ? "text" : "password"}
+                          id="password"
+                          onChange={handleChange}
+                          value={values.password}
+                          isValid={touched.password && !errors.password}
+                          isInvalid={!!errors.password}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                        </Form.Control.Feedback>
+                      </InputGroup>
 
-                  <div
-                    className="visibilityIconCreateAcc"
-                    onClick={clickShowHidePassword}
-                  >
-                    {isShowPassword ? (
-                      <MdVisibility />
-                    ) : (
-                      <MdOutlineVisibility />
-                    )}
+                      <div
+                        className="visibilityIconCreateAcc"
+                        onClick={clickShowHidePassword}
+                      >
+                        {isShowPassword ? (
+                          <MdVisibility />
+                        ) : (
+                          <MdOutlineVisibility />
+                        )}
+                      </div>
+                    </Form.Group>
+                    <Form.Group className="formRowBox">
+                      <Form.Label htmlFor="position">Chức vụ</Form.Label>
+                      <Form.Select
+                        value={values.position}
+                        name="position"
+                        id="position"
+                        onChange={handleChange}
+                      >
+                        <option value="Nhân viên">Kế Toán</option>
+                        <option value="Quản trị viên">Quản lý</option>
+                      </Form.Select>
+                    </Form.Group>
                   </div>
-                </Form.Group>
-                <Form.Group className="formRowBox">
-                  <Form.Label htmlFor="position">Chức vụ</Form.Label>
-                  <Form.Select
-                    value={values.position}
-                    name="position"
-                    id="position"
-                    onChange={handleChange}
-                  >
-                    <option value="Nhân viên">Kế Toán</option>
-                    <option value="Quản trị viên">Quản lý</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="buttonBox">
-                <Button
-                  type="submit"
-                  className="createAccountButton"
-                  onClick={handleSubmit}
-                >
-                  Tạo
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
+                  <div className="buttonBox">
+                    <Button
+                      type="submit"
+                      className="createAccountButton"
+                      onClick={handleSubmit}
+                    >
+                      Tạo
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </>
+      )}
     </div>
   );
 }
