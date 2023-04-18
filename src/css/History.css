@@ -30,7 +30,8 @@
 
 .historyTable{
     background-color: #fff;
-    padding: 20px 20px 8px 20px;
+    border-radius: 8px;
+    padding: 10px 20px 20px;
 }
 
 .historyTable td{
@@ -38,13 +39,21 @@
     color: #212529;
 }
 
+.historyTable .css-1s4ojij-MuiTableHead-root{
+    background-color: #bdbdbd;
+}
+
+.historyTable thead{
+    background-color: #bdbdbd;
+}
+
 .editHistoryInfo {
     min-width: 100px !important;
 }
 
-.css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+/* .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
     max-width: 600px;
     width: 600px;
     height: 400px;
     max-height: 600px;
-}
+} */

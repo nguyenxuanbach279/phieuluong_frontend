@@ -30,7 +30,8 @@
 
 .accountTable {
     background-color: #fff;
-    padding: 20px 20px 8px 20px;
+    padding: 10px 20px 20px;
+    border-radius: 8px;
 }
 
 .accountTable td{
@@ -45,5 +46,5 @@
 .footerAccountPage {
     display: flex;
     justify-content: flex-end;
-    margin-top: 12px;
+    margin-top: 0px;
 }

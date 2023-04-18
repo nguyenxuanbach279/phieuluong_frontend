@@ -34,6 +34,7 @@ export default function CreateAccount() {
     const isAdmin = value.position === "Kế toán" ? 0 : 1;
 
     const newAccount = {
+      id: `abc${Math.floor(Math.random() * 1000)}`,
       name: "User name",
       email: value.email,
       password: value.password,
