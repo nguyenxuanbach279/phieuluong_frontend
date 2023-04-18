@@ -20,6 +20,7 @@ import {
   Stack,
   Typography,
   Button,
+  IconButton,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
@@ -114,7 +115,10 @@ export default function History() {
     // Tạo một thẻ <a> để tạo link download
     const a = document.createElement("a");
 
-    a.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(data));
+    a.setAttribute(
+      "href",
+      "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(data)
+    );
 
     // Thiết lập href của thẻ <a> bằng URL tạm thời
     // a.href = url;
@@ -169,7 +173,14 @@ export default function History() {
       </div>
       <div className="historyContentBox">
         <div className="historyTable">
-          <TableContainer sx={{ height: 450 }}>
+          <TableContainer
+            sx={{
+              maxHeight: 510,
+              borderTop: "none",
+              minWidth: 600,
+              // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
+            }}
+          >
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -191,20 +202,19 @@ export default function History() {
                 {historyData.map((history, index) => {
                   return (
                     <TableRow key={index}>
-                      <TableCell sx={{ textAlign: "center", padding: "16px" }}>
+                      <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                         {index + 1}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", padding: "16px" }}>
+                      <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                         {history.namePerformer}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", padding: "16px" }}>
+                      <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                         {history.perforDate}
                       </TableCell>
-                      <TableCell
-                        sx={{ textAlign: "center", padding: "16px" }}
-                        onClick={() => clickDetailHistory(history)}
-                      >
-                        <BsThreeDotsVertical />
+                      <TableCell sx={{ textAlign: "center", padding: "12px" }}>
+                        <IconButton onClick={() => clickDetailHistory(history)}>
+                          <BsThreeDotsVertical />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
@@ -220,8 +230,15 @@ export default function History() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Chi tiết lịch sử</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="alert-dialog-title1">Chi tiết lịch sử</DialogTitle>
+        <DialogContent
+          style={{
+            minWidth: 600,
+            minHeight: 200,
+            maxHeight: 400,
+            maxWidth: 600,
+          }}
+        >
           <Stack rowGap={2}>
             <Stack flexDirection="row" alignItems="center">
               <Typography className="editHistoryInfo">Họ và tên:</Typography>

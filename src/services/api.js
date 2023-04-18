@@ -86,8 +86,8 @@ const forgotPassword = (email) => {
   });
 };
 
-const getInfoEmployee = (jwtToken, id) => {
-  return api.get("Employee/detail", {
+const getInfoEmployee = (jwtToken, id, pass) => {
+  return api.get("Employee/detail", pass, {
     params: { id: id },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
@@ -173,7 +173,8 @@ const getHistoryDataDownloadExcel = (jwtToken, id) => {
     params: { IDHistory: id },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
-      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
   });
 };
@@ -197,5 +198,5 @@ export default {
   updateEmployeePayCheckStatus,
   getHistoryData,
   getHistoryDataByName,
-  getHistoryDataDownloadExcel
+  getHistoryDataDownloadExcel,
 };

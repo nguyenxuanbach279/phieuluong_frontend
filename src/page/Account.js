@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   Pagination,
   Table,
   TableBody,
@@ -36,11 +37,10 @@ export default function Account() {
   };
 
   useEffect(() => {
-    if(appState.accountInfo.isAdmin == 1){
+    if (appState.accountInfo.isAdmin == 1) {
       getAccountList();
-    }
-    else{
-      toast.error("Bạn cần cấp quyền")
+    } else {
+      toast.error("Bạn cần cấp quyền");
     }
   }, [keySearch]);
 
@@ -75,10 +75,10 @@ export default function Account() {
         appState.jwtToken,
         accountPrepareDelete.email
       );
-      if(deleteAccountRes.status === 200){
+      if (deleteAccountRes.status === 200) {
         setOpen(false);
         getAccountList();
-        toast.success("Xóa tài khoản thành công")
+        toast.success("Xóa tài khoản thành công");
       }
     } catch (error) {
       console.log(error);
@@ -100,33 +100,62 @@ export default function Account() {
       </div>
       <div className="accountContentBox">
         <div className="accountTable">
-          <TableContainer sx={{ maxHeight: 450 }}>
+          <TableContainer
+            sx={{
+              maxHeight: 450,
+              borderTop: "none",
+              minWidth: 600,
+              // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
+            }}
+          >
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  <TableCell>STT</TableCell>
-                  <TableCell>Họ tên</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Chức vụ</TableCell>
-                  <TableCell>Người tạo</TableCell>
-                  <TableCell>Xóa</TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    STT
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    Họ tên
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    Email
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    Chức vụ
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    Người tạo
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                    Xóa
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {accountList.map((account, index) => {
                   return (
                     <TableRow key={index}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{account.name}</TableCell>
-                      <TableCell>{account.email}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                        {index + 1}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                        {account.name}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                        {account.email}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
                         {account.isAdmin === 1 ? "Quản lý" : "Kế toán"}
                       </TableCell>
-                      <TableCell>{account.createdBy}</TableCell>
-                      <TableCell>
-                        <RiDeleteBin6Line
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                        {account.createdBy}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                        <IconButton
                           onClick={() => clickDeleteAccountIcon(account)}
-                        />
+                        >
+                          <RiDeleteBin6Line />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );

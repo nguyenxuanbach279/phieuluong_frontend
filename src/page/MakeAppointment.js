@@ -281,7 +281,14 @@ export default function MakeAppointment() {
         </div>
         <div className="employeeContentBox">
           <div className="employeeTable">
-            <TableContainer sx={{ height: 460 }}>
+            <TableContainer
+              sx={{
+                maxHeight: 460,
+                borderTop: "none",
+                minWidth: 600,
+                // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
+              }}
+            >
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
@@ -377,11 +384,12 @@ export default function MakeAppointment() {
                         >
                           {paycheck[employee.statusPaycheck]}
                         </TableCell>
-                        <TableCell
-                          sx={{ textAlign: "center", padding: "4px" }}
-                          onClick={() => clickEditEmployee(employee)}
-                        >
-                          <BsThreeDotsVertical />
+                        <TableCell sx={{ textAlign: "center", padding: "4px" }}>
+                          <IconButton
+                            onClick={() => clickEditEmployee(employee)}
+                          >
+                            <BsThreeDotsVertical />
+                          </IconButton>
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           <IconButton
