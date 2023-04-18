@@ -29,8 +29,8 @@ function App() {
         <Route exact path="/forgotPassword" element={<ForgotPassword />} />
         <Route exact path="/" element={<HomePage />}>
           <Route exact path="/account" element={<Account />} />
-          <Route exact path="/employee/edit" element={<EditEmployee />} />
-          <Route exact path="/employee/create" element={<EditEmployee />} />
+          <Route exact path="/appointment/employee/edit" element={<EditEmployee />} />
+          <Route exact path="/appointment/employee/create" element={<EditEmployee />} />
           <Route exact path="/account/create" element={<CreateAccount />} />
           <Route exact path="/history" element={<History />} />
           <Route exact path="/appointment" element={<MakeAppointment />} />

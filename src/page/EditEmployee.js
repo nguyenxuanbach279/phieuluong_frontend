@@ -18,6 +18,7 @@ import { useLocation, useParams } from "react-router-dom";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
 import { toast } from "react-toastify";
+import moment from "moment/moment";
 
 export default function EditEmployee() {
   const { appState, dispatch } = useContext(AppContext);
@@ -30,7 +31,6 @@ export default function EditEmployee() {
   const [employeeEmail, setEmployeeEmail] = useState("");
   const [employeePhone, setEmployeePhone] = useState("");
   const [employeeDepartmentID, setEmployeeDepartmentID] = useState(1);
-
   const [employeePosition, setEmployeePosition] = useState("");
   const [employeeSalary, setEmployeeSalary] = useState("");
   const [employeeCoefficyPower, setEmployeeCoefficyPower] = useState("");
@@ -41,6 +41,8 @@ export default function EditEmployee() {
   const [salaryMonth, setSalaryMonth] = useState(1);
   const [taxFee, setTaxFee] = useState("");
   const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState("");
+  const [employeeStatusEmployee, setEmployeeStatusEmployee] = useState(-1);
+  const [employeeAdvance, setEmployeeAdvance] = useState("");
 
   const departments = [
     "Giám đốc",
@@ -59,7 +61,7 @@ export default function EditEmployee() {
   const paycheck = ["Chưa xác nhận", "Xác nhận"];
 
   useEffect(() => {
-    if (location.pathname === "/employee/edit") {
+    if (location.pathname === "/appointment/employee/edit") {
       getDetailEmployee();
     }
   }, []);
@@ -83,11 +85,13 @@ export default function EditEmployee() {
         setEmployeeCoefficyTimeKeeping(
           employeeDataRes.data.data.coefficyTimeKeeping
         );
-        setEmployeeDoB(employeeDataRes.data.data.doB);
+        setEmployeeDoB(moment(employeeDataRes.data.data.doB, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD"));
         setEmployeeInsurance(employeeDataRes.data.data.insurance);
         setSalaryMonth(employeeDataRes.data.data.month);
         setEmployeeStatusPaycheck(employeeDataRes.data.data.statusPaycheck);
         setTaxFee(employeeDataRes.data.data.taxFee);
+        setEmployeeAdvance(employeeDataRes.data.data.advance);
+        setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee)
       }
     } catch (error) {
       console.log(error);
@@ -138,6 +142,10 @@ export default function EditEmployee() {
     setEmployeeStatusPaycheck(e.target.value);
   };
 
+  const onChangeStatusEmployee = (e) => {
+    setEmployeeStatusEmployee(e.target.value);
+  };
+
   const onChangeTaxFee = (e) => {
     setTaxFee(e.target.value);
   };
@@ -150,7 +158,9 @@ export default function EditEmployee() {
     setEmployeeEmail(e.target.value);
   };
 
-  console.log(employeeDetail)
+  const onChangeAdvance = (e) => {
+    setEmployeeAdvance(e.target.value);
+  };
 
   const clickSaveEmployeeInfo = async () => {
     const data = {
@@ -162,22 +172,22 @@ export default function EditEmployee() {
       departmentID: employeeDepartmentID,
       phone: employeePhone,
       employeeCode: employeeCode,
-      statusEmployee: 0,
+      statusEmployee: parseInt(employeeStatusEmployee),
       basicSalary: employeeSalary,
       coefficyTimeKeeping: employeeCoefficyTimeKeeping,
       coefficyPower: employeeCoefficyPower,
       taxFee: taxFee,
       insurance: employeeInsurance,
-      advance: 0,
+      advance: employeeAdvance,
       month: salaryMonth,
-      statusPaycheck: employeeStatusPaycheck,
+      statusPaycheck: 0,
       paymentStatus: 0,
     };
 
     console.log(data);
 
     try {
-      if (location.pathname === "/employee/edit") {
+      if (location.pathname === "/appointment/employee/edit") {
         const updateInfoEmployeeRes = await api.updateInfoEmployee(
           appState.jwtToken,
           data
@@ -198,17 +208,17 @@ export default function EditEmployee() {
       console.log(error);
     }
   };
-  console.log(employeeDetail);
+
   return (
     <div className="editEmployeeContainer">
       <div className="editEmployeeTitleBox">
-        <p className="editEmployeeTitle">Chỉnh sửa thông tin nhân viên</p>
+        <p className="editEmployeeTitle">{location.pathname === "/appointment/employee/edit" ? "Chỉnh sửa thông tin nhân viên" : "Tạo nhân viên mới"}</p>
 
         <div className="editEmployeeAction">
           <Button variant="contained" style={{ minWidth: 120, height: 50 }}>
             Hủy
           </Button>
-          {location.pathname === "/employee/edit" ? (
+          {location.pathname === "/appointment/employee/edit" ? (
             <>
               <Button
                 variant="contained"
@@ -252,7 +262,7 @@ export default function EditEmployee() {
                 onChange={onChangeEmployeeCode}
               />
             </Stack>
-            {location.pathname === "/employee/edit" ? (
+            {location.pathname === "/appointment/employee/edit" ? (
               <>
                 <Stack flexDirection="row" columnGap={2} alignItems="center">
                   <Typography className="editEmployeeInfo">
@@ -335,7 +345,13 @@ export default function EditEmployee() {
               <TextField
                 value={employeeCoefficyTimeKeeping}
                 type="text"
+                style={{ width: 200 }}
                 onChange={onChangeCoefficyTimeKeeping}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">công</InputAdornment>
+                  ),
+                }}
               />
             </Stack>
             <Stack
@@ -351,6 +367,7 @@ export default function EditEmployee() {
                 value={employeeDoB}
                 type="date"
                 onChange={onChangeEmployeeDoB}
+                sx={{width: 200}}
               />
             </Stack>
 
@@ -362,6 +379,12 @@ export default function EditEmployee() {
                 value={employeeInsurance}
                 type="text"
                 onChange={onChangeInsurance}
+                style={{ width: 200 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">VNĐ</InputAdornment>
+                  ),
+                }}
               />
             </Stack>
             {/* <Stack flexDirection="row" columnGap={2} alignItems="center">
@@ -386,13 +409,15 @@ export default function EditEmployee() {
 
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Trạng thái</Typography>
-              <FormControl style={{ width: 200 }}>
+              <FormControl style={{ width: 200, height: 56 }}>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={employeeStatusPaycheck}
-                  onChange={onChangeStatusPaycheck}
+                  value={employeeStatusEmployee}
+                  onChange={onChangeStatusEmployee}
+                  sx={{height: 56}}
                 >
+                  <MenuItem value="0">Chưa cập nhập</MenuItem>
                   <MenuItem value="1">Đang làm</MenuItem>
                   <MenuItem value="2">Nghỉ việc</MenuItem>
                   <MenuItem value="3">Nghỉ thai sản</MenuItem>
@@ -414,13 +439,28 @@ export default function EditEmployee() {
               />
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Typography className="editEmployeeInfo">Tiền ứng trước</Typography>
+              <TextField
+                value={employeeAdvance}
+                type="text"
+                style={{ width: 200 }}
+                onChange={onChangeAdvance}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">VNĐ</InputAdornment>
+                  ),
+                }}
+              />
+            </Stack>
+            <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Phòng ban</Typography>
-              <FormControl style={{ width: 200 }}>
+              <FormControl style={{ width: 200, height: 56 }}>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={employeeDepartmentID}
                   onChange={onChangeDepartmentID}
+                  sx={{height: 56}}
                 >
                   {departments.map((item, index) => {
                     return (

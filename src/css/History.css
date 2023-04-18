@@ -1,0 +1,50 @@
+.historyContainer{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.historyTitleBox{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    padding: 0 24px;
+}
+
+.historyTitle{
+    font-size: 28px;
+    font-weight: 700;
+    user-select: none;
+}
+
+.historyContentBox{
+    padding: 24px;
+    background-color: #edf4f8;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+}
+
+.historyTable{
+    background-color: #fff;
+    padding: 20px 20px 8px 20px;
+}
+
+.historyTable td{
+    font-size: 16px;
+    color: #212529;
+}
+
+.editHistoryInfo {
+    min-width: 100px !important;
+}
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+    max-width: 600px;
+    width: 600px;
+    height: 400px;
+    max-height: 600px;
+}

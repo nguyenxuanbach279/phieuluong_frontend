@@ -59,6 +59,7 @@ export default function MakeAppointment() {
   const [datetime, setDatetime] = useState(dayjs(new Date()));
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
+  console.log(employeeList);
 
   const [employeePrepareDelete, setEmployeePrepareDelete] = useState({});
   const [open, setOpen] = useState(false);
@@ -175,11 +176,11 @@ export default function MakeAppointment() {
       type: "SET_EMPLOYEEID_EDIT",
       employeeIdEdit: employee.id,
     });
-    navigate(`/employee/edit`);
+    navigate(`/appointment/employee/edit`);
   };
 
   const clickCreateEmployeePage = () => {
-    navigate("/employee/create");
+    navigate("/appointment/employee/create");
   };
 
   const clickSendPaycheck = async () => {
@@ -360,7 +361,12 @@ export default function MakeAppointment() {
                           {employee.month}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          01/01/2023
+                          {employee.sendDate
+                            ? moment(
+                                employee.sendDate,
+                                "YYYY-MM-DDTHH:mm:ss"
+                              ).format("DD-MM-YYYY")
+                            : "Chưa gửi"}
                         </TableCell>
                         <TableCell
                           style={{

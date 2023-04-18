@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../css/Sidebar.css";
 import { BsCalendar3 } from "react-icons/bs";
 import { BiHistory } from "react-icons/bi";
@@ -9,6 +9,7 @@ import { AppContext } from "../contexts/app.context";
 
 function SideBar() {
   const { appState, dispatch } = useContext(AppContext);
+  const location = useLocation();
   const onClickItem = (index) => {
     dispatch({
       type: "SET_CHOOSE_SIDEBAR_ITEM",
@@ -70,9 +71,9 @@ function SideBar() {
                 <div
                   key={index}
                   className={
-                    appState.indexItem === index ? "itemBox active" : "itemBox"
+                    location.pathname.includes(item.path) ? "itemBox active" : "itemBox"
                   }
-                  onClick={() => onClickItem(index)}
+                  // onClick={() => onClickItem(index)}
                 >
                   <Link to={item.path}>
                     <i>{item.icon}</i>

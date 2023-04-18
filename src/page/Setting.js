@@ -68,6 +68,7 @@ export default function Setting() {
 
   const handleSubmit = async (values) => {
     const newData = {
+      id: appState.accountInfo.id,
       name: values.name,
       email: appState.accountInfo.email,
       password:
@@ -78,6 +79,8 @@ export default function Setting() {
       createdBy: appState.accountInfo.createdBy,
       modifiedBy: appState.accountInfo.name,
     };
+
+    // console.log(newData)
 
     try {
       const updateAccountRes = await api.updateAccount(
@@ -91,9 +94,10 @@ export default function Setting() {
         } else {
           const accountInfoRes = await api.getAccountInfo(
             appState.jwtToken,
-            appState.accountInfo.email
+            appState.accountInfo.id
           );
           const accountInfo = accountInfoRes.data.data;
+          console.log(accountInfoRes)
           dispatch({
             type: "SET_ACCOUNT_INFO",
             accountInfo: accountInfo,
@@ -112,26 +116,6 @@ export default function Setting() {
       type: "RESET_STATE",
     });
   };
-
-  // const onChangeOldPassword = (e) => {
-  //   setState({ ...state, oldPassword: e.target.value });
-  // };
-
-  // const onChangePassword = (e) => {
-  //   setState({ ...state, password: e.target.value });
-  // };
-
-  // const onChangeConfirmPassword = (e) => {
-  //   setState({ ...state, confirmPassword: e.target.value });
-  // };
-
-  // const onChangeName = (e) => {
-  //   setState({ ...state, name: e.target.value });
-  // };
-
-  // const onChangePhone = (e) => {
-  //   setState({ ...state, phone: e.target.value });
-  // };
 
   return (
     <div className="settingContainer">

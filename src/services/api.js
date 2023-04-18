@@ -143,9 +143,37 @@ const uploadExcel = (jwtToken, data) => {
 
 const updateEmployeePayCheckStatus = (id, value) => {
   return api.post(`Employee/update?ID=${id}&value=${value}`, {
-    // params: { ID: id, value: value },
     headers: {
-      "accept": "text/plain",
+      accept: "text/plain",
+    },
+  });
+};
+
+const getHistoryData = (jwtToken) => {
+  return api.get("History", {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getHistoryDataByName = (jwtToken, name) => {
+  return api.get("History/searchbyname", {
+    params: { value: name },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getHistoryDataDownloadExcel = (jwtToken, id) => {
+  return api.get("History/download", {
+    params: { IDHistory: id },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
   });
 };
@@ -166,5 +194,8 @@ export default {
   sendPaycheckNow,
   uploadExcel,
   sendPaycheckSetCalendar,
-  updateEmployeePayCheckStatus
+  updateEmployeePayCheckStatus,
+  getHistoryData,
+  getHistoryDataByName,
+  getHistoryDataDownloadExcel
 };
