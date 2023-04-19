@@ -286,6 +286,7 @@ export default function MakeAppointment() {
                 maxHeight: 460,
                 borderTop: "none",
                 minWidth: 600,
+                minHeight: 460,
                 // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
               }}
             >

@@ -1,6 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../css/SalaryView.css";
-import { Button, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { toast } from "react-toastify";
 import { useLocation, useParams } from "react-router-dom";
 import { AppContext } from "../contexts/app.context";
@@ -8,14 +18,16 @@ import api from "../services/api";
 import moment from "moment";
 export default function SalaryView() {
   const { appState, dispatch } = useContext(AppContext);
-  const [employeeDetail, setEmployeeDetail] = useState({});
+  const [employeeDetail, setEmployeeDetail] = useState("");
+  const [open, setOpen] = React.useState(true);
+  const [password, setPassword] = useState("")
   const location = useLocation();
   const { search } = location;
   const id = search.slice(4);
 
-  useEffect(() => {
-    getDetailEmployee();
-  }, []);
+  // useEffect(() => {
+  //   getDetailEmployee();
+  // }, []);
 
   const getDetailEmployee = async () => {
     try {
@@ -27,6 +39,14 @@ export default function SalaryView() {
       console.log(error);
     }
   };
+
+  const changePassword = (e) => {
+    setPassword(e.target.value)
+  }
+
+  const clickSendPassword = () => {
+    
+  }
 
   const totalSalary =
     ((employeeDetail.basicSalary * employeeDetail.coefficyTimeKeeping) / 22) *
@@ -71,7 +91,7 @@ export default function SalaryView() {
 
   return (
     <>
-      {employeeDetail && (
+      {employeeDetail ? (
         <div className="salaryViewContainer">
           <div className="salaryViewBox">
             <p className="salaryViewTitle">
@@ -109,7 +129,7 @@ export default function SalaryView() {
                     Lương cơ bản:
                   </Typography>
                   <Typography>
-                    {employeeDetail.basicSalary?.toLocaleString("it-IT")}{" "}
+                    {employeeDetail?.basicSalary?.toLocaleString("it-IT")}{" "}
                     <span style={{ fontSize: 14 }}>VNĐ</span>
                   </Typography>
                 </Stack>
@@ -190,7 +210,28 @@ export default function SalaryView() {
             </div>
           </div>
         </div>
+      ) : (
+        <></>
       )}
+      <Dialog
+        open={open}
+        // onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Yêu cầu nhập mật khẩu</DialogTitle>
+        <DialogContent
+          sx={{
+            minWidth: 500,
+            minHeight: 50
+          }}
+        >
+          <TextField fullWidth type="text" variant="standard" value={password} onChange={changePassword}/>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" sx={{width: 80, height: 40}} onClick={() => clickSendPassword}>Gửi</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
