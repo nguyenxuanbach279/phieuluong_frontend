@@ -233,6 +233,8 @@ export default function MakeAppointment() {
     }
   };
 
+  console.log(employeeList);
+
   return (
     <>
       <div className="employeeListContainer">

@@ -97,6 +97,9 @@ export default function History() {
         url: `https://localhost:7101/api/History/download?IDHistory=${historyId}`,
         method: "GET",
         responseType: "arraybuffer",
+        headers: {
+          Authorization: `Bearer ${appState.jwtToken}`,
+        }
       });
       if(response.status === 200){
         toast.success("Tải xuống thành công")

@@ -86,7 +86,17 @@ const forgotPassword = (email) => {
   });
 };
 
-const getInfoEmployee = (jwtToken, id, pass) => {
+const getInfoEmployee = (jwtToken, id) => {
+  return api.get("Employee/detailEmployee", {
+    params: { id: id },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getInfoEmployeePrivate = (jwtToken, id, pass) => {
   return api.get("Employee/detail", pass, {
     params: { id: id },
     headers: {
@@ -199,4 +209,5 @@ export default {
   getHistoryData,
   getHistoryDataByName,
   getHistoryDataDownloadExcel,
+  getInfoEmployeePrivate
 };
