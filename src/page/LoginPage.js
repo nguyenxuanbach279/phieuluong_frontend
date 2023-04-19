@@ -5,7 +5,7 @@ import { FiMail, FiKey } from "react-icons/fi";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import api from "../services/api";
 import jwtDecode from "jwt-decode";
 import { AppContext } from "../contexts/app.context";
@@ -94,8 +94,6 @@ function LoginPage() {
                     value={values.email}
                     onChange={handleChange}
                     placeholder="Nhập địa chỉ email"
-                    // isValid={touched.email && !errors.email}
-                    // isInvalid={!!errors.email}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.email}
@@ -118,8 +116,6 @@ function LoginPage() {
                     value={values.password}
                     placeholder="Nhập mật khẩu"
                     autoComplete="off"
-                    // isValid={touched.password && !errors.password}
-                    // isInvalid={!!errors.password}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.password}

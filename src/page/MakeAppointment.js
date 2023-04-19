@@ -5,7 +5,6 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import "../css/Account.css";
 import "../css/MakeAppointment.css";
 import {
-  Box,
   Checkbox,
   InputLabel,
   MenuItem,
@@ -17,7 +16,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Typography,
   FormControl as FormControlMui,
@@ -26,7 +24,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  TextField,
   Button,
   IconButton,
 } from "@mui/material";
@@ -44,25 +41,22 @@ import moment from "moment/moment";
 
 export default function MakeAppointment() {
   const navigate = useNavigate();
+  const { appState, dispatch } = useContext(AppContext);
   const [employeeList, setEmployeeList] = useState([]);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [keySearch, setKeySearch] = useState("");
-  const { appState, dispatch } = useContext(AppContext);
   const [showModal, setShowModal] = useState(false);
   const [typeOfAppointment, setTypeOfAppointment] = useState("Gửi luôn");
-  const [date, setDate] = useState(new Date());
   const [selected, setSelected] = useState([]);
   const [mailInTable, setMailInTable] = useState([]);
-  const [employeeEdit, setEmployeeEdit] = useState({});
   const [datetime, setDatetime] = useState(dayjs(new Date()));
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = () => setShowModal(true);
-  console.log(employeeList);
-
   const [employeePrepareDelete, setEmployeePrepareDelete] = useState({});
   const [open, setOpen] = useState(false);
+  
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = () => setShowModal(true);
 
   const handleClose = () => {
     setEmployeePrepareDelete({});
@@ -222,13 +216,11 @@ export default function MakeAppointment() {
 
   const onChangeFile = async (e) => {
     const temp = e.target.files;
-    // console.log(Object.values(temp));
-
     const data = new FormData();
     Object.values(temp).forEach((file) => {
       data.append("fileExcel", file);
     });
-    console.log(data);
+
     try {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
@@ -240,8 +232,6 @@ export default function MakeAppointment() {
       console.log(error);
     }
   };
-
-  // console.log(datetime["$d"].toISOString());
 
   return (
     <>
@@ -287,7 +277,6 @@ export default function MakeAppointment() {
                 borderTop: "none",
                 minWidth: 600,
                 minHeight: 460,
-                // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
               }}
             >
               <Table stickyHeader aria-label="sticky table">

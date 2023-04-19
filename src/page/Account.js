@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, FormControl } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import "../css/Account.css";
 import {
   Dialog,
@@ -10,13 +8,13 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Pagination,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Button
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
@@ -28,7 +26,7 @@ export default function Account() {
   const [accountList, setAccountList] = useState([]);
   const [keySearch, setKeySearch] = useState("");
   const [accountPrepareDelete, setAccountPrepareDelete] = useState({});
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState } = useContext(AppContext);
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -173,7 +171,7 @@ export default function Account() {
             shape="rounded"
             onChange={onChangePage}
           /> */}
-          <Button onClick={onClickCreateAccount}>Tạo tài khoản</Button>
+          <Button variant="contained" onClick={onClickCreateAccount}>Tạo tài khoản</Button>
         </div>
       </div>
       <Dialog
@@ -191,10 +189,10 @@ export default function Account() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} style={{ minWidth: 100 }}>
+          <Button variant="contained" onClick={handleClose} style={{ minWidth: 80 }}>
             Hủy
           </Button>
-          <Button onClick={clickDeleteAccount} autoFocus>
+          <Button variant="contained" onClick={clickDeleteAccount} autoFocus>
             Xóa tài khoản
           </Button>
         </DialogActions>

@@ -5,14 +5,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { toast } from "react-toastify";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { AppContext } from "../contexts/app.context";
 import api from "../services/api";
 import moment from "moment";
@@ -215,7 +214,6 @@ export default function SalaryView() {
       )}
       <Dialog
         open={open}
-        // onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
