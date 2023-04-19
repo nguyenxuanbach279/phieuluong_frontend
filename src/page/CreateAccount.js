@@ -1,6 +1,7 @@
-import { Formik } from "formik";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Form, InputGroup } from "react-bootstrap";
+import { Form, InputGroup } from "react-bootstrap";
+import { Button } from "@mui/material";
+import { Formik } from "formik";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 import "../css/CreateAccount.css";
 import * as Yup from "yup";
@@ -18,7 +19,7 @@ const createAccountSchema = Yup.object().shape({
 
 export default function CreateAccount() {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState } = useContext(AppContext);
 
   useEffect(() => {
     if (appState.accountInfo.isAdmin == 0) {
@@ -138,6 +139,7 @@ export default function CreateAccount() {
                   <div className="buttonBox">
                     <Button
                       type="submit"
+                      variant="contained"
                       className="createAccountButton"
                       onClick={handleSubmit}
                     >

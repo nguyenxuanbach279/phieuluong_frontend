@@ -3,15 +3,11 @@ import "../css/EditEmployee.css";
 import {
   Button,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   TextField,
   InputAdornment,
-  InputLabel,
   MenuItem,
   Select,
   Stack,
-  Input,
   Typography,
 } from "@mui/material";
 import { useLocation, useParams } from "react-router-dom";
@@ -21,10 +17,8 @@ import { toast } from "react-toastify";
 import moment from "moment/moment";
 
 export default function EditEmployee() {
-  const { appState, dispatch } = useContext(AppContext);
-  const params = useParams();
+  const { appState } = useContext(AppContext);
   const location = useLocation();
-  const { id } = params;
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [employeeName, setEmployeeName] = useState("");
   const [employeeCode, setEmployeeCode] = useState("");
@@ -53,12 +47,6 @@ export default function EditEmployee() {
     "Bán hàng",
     "Hành chính",
   ];
-
-
-
-  const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-  const paycheck = ["Chưa xác nhận", "Xác nhận"];
 
   useEffect(() => {
     if (location.pathname === "/appointment/employee/edit") {
@@ -132,14 +120,6 @@ export default function EditEmployee() {
 
   const onChangeInsurance = (e) => {
     setEmployeeInsurance(e.target.value);
-  };
-
-  const onChangeSalaryMonth = (e) => {
-    setSalaryMonth(e.target.value);
-  };
-
-  const onChangeStatusPaycheck = (e) => {
-    setEmployeeStatusPaycheck(e.target.value);
   };
 
   const onChangeStatusEmployee = (e) => {
@@ -387,26 +367,6 @@ export default function EditEmployee() {
                 }}
               />
             </Stack>
-            {/* <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Tháng</Typography>
-              <FormControl style={{ width: 200 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={salaryMonth}
-                  onChange={onChangeSalaryMonth}
-                >
-                  {month.map((item) => {
-                    return (
-                      <MenuItem value={item} key={item}>
-                        {item}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Stack> */}
-
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Trạng thái</Typography>
               <FormControl style={{ width: 200, height: 56 }}>

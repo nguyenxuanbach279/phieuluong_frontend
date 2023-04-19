@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FormControl } from "react-bootstrap";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "../css/History.css";
 import {
@@ -20,19 +19,17 @@ import {
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
 export default function History() {
-  const navigate = useNavigate();
   const [historyData, setHistoryData] = useState([]);
   const [keySearch, setKeySearch] = useState("");
   const [detailData, setDetailData] = useState("");
   const [open, setOpen] = useState(false);
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState } = useContext(AppContext);
   const [historyId, setHistoryId] = useState(-1)
 
   useEffect(() => {

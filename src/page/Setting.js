@@ -45,15 +45,9 @@ const changeUserInfoSchema = Yup.object().shape({
 
 export default function Setting() {
   const navigate = useNavigate();
-  const [isShowPassword, setIsShowPassword] = useState(false);
   const { appState, dispatch } = useContext(AppContext);
-
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const [open, setOpen] = React.useState(false);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const [state, setState] = React.useState({
     oldPassword: "",
     password: "",
@@ -80,11 +74,7 @@ export default function Setting() {
       modifiedBy: appState.accountInfo.name,
     };
 
-    // console.log(newData)
-
     try {
-      console.log(values);
-
       const updateAccountRes = await api.updateAccount(
         appState.jwtToken,
         newData
@@ -147,9 +137,7 @@ export default function Setting() {
                       name="oldPassword"
                       type="password"
                       id="oldPassword"
-                      // value={state.oldPassword}
                       value={values.oldPassword}
-                      // onChange={onChangeOldPassword}
                       onChange={handleChange}
                       isValid={touched.password && !errors.oldPassword}
                       isInvalid={!!errors.oldPassword}
@@ -167,7 +155,6 @@ export default function Setting() {
                       name="password"
                       type={isShowPassword ? "text" : "password"}
                       id="password"
-                      // onChange={onChangePassword}
                       onChange={handleChange}
                       value={values.password}
                       isValid={
@@ -204,8 +191,6 @@ export default function Setting() {
                       type="password"
                       id="confirmPassword"
                       value={values.confirmPassword}
-                      // value={state.confirmPassword}
-                      // onChange={onChangeConfirmPassword}
                       onChange={handleChange}
                       isValid={
                         touched.confirmPassword && !errors.confirmPassword
@@ -218,45 +203,6 @@ export default function Setting() {
                     </Form.Control.Feedback>
                   </InputGroup>
                 </Form.Group>
-                {/* <Form.Label>Thông tin cá nhân</Form.Label>
-                <Form.Group className="formRowBox" id="validationFormik01">
-                  <Form.Label htmlFor="name">Họ tên</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      name="name"
-                      type="text"
-                      id="name"
-                      // value={state.name}
-                      value={values.name}
-                      // onChange={onChangeName}
-                      onChange={handleChange}
-                      isValid={touched.name &&!errors.name}
-                      isInvalid={!!errors.name}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.name}
-                    </Form.Control.Feedback>
-                  </InputGroup>
-                </Form.Group>
-                <Form.Group className="formRowBox" id="validationFormik01">
-                  <Form.Label htmlFor="phone">Số điện thoại</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      name="phone"
-                      type="text"
-                      id="phone"
-                      // value={state.phone}
-                      value={values.phone}
-                      // onChange={onChangePhone}
-                      onChange={handleChange}
-                      isValid={touched.phone &&!errors.phone}
-                      isInvalid={!!errors.phone}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.phone}
-                    </Form.Control.Feedback>
-                  </InputGroup>
-                </Form.Group> */}
               </div>
               <div className="buttonBox">
                 <Button
@@ -286,11 +232,8 @@ export default function Setting() {
                       name="name"
                       type="text"
                       id="name"
-                      // value={state.name}
                       value={values.name}
-                      // onChange={onChangeName}
                       onChange={handleChange}
-                      // isValid={touched.name && !errors.name}
                       isInvalid={!!errors.name}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -305,11 +248,8 @@ export default function Setting() {
                       name="phone"
                       type="text"
                       id="phone"
-                      // value={state.phone}
                       value={values.phone}
-                      // onChange={onChangePhone}
                       onChange={handleChange}
-                      // isValid={touched.phone && !errors.phone}
                       isInvalid={!!errors.phone}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -333,7 +273,6 @@ export default function Setting() {
       </div>
       <Dialog
         open={open}
-        // onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -344,7 +283,6 @@ export default function Setting() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          {/* <Button onClick={handleClose}>Không</Button> */}
           <Button onClick={loginAgain} autoFocus>
             Đồng ý
           </Button>

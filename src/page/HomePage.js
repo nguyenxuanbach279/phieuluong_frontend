@@ -1,11 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { Button } from "react-bootstrap";
-import { AiOutlineLogout, AiOutlineUpload } from "react-icons/ai";
+import { AiOutlineLogout } from "react-icons/ai";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { SideBar } from "../components";
 import { AppContext } from "../contexts/app.context";
 import "../css/HomePage.css";
-import api from "../services/api";
 
 export default function HomePage() {
   const navigate = useNavigate();

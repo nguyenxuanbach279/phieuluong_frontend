@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import "../css/LoginPage.css";
-import { FiMail, FiKey } from "react-icons/fi";
+import { FiMail } from "react-icons/fi";
 import { CiLogin } from "react-icons/ci";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -79,12 +79,7 @@ function ForgotPassword() {
                     value={values.email}
                     onChange={handleChange}
                     placeholder="Nhập địa chỉ email"
-                    // isValid={touched.email && !errors.email}
-                    // isInvalid={!!errors.email}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
                 </InputGroup>
               </Form.Group>
 
