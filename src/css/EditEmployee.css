@@ -36,6 +36,7 @@
     overflow: auto;
     display: flex;
     column-gap: 120px;
+    border-radius: 8px;
 }
 
 .editEmployeeInfo {

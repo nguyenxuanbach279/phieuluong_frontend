@@ -39,14 +39,6 @@
     color: #212529;
 }
 
-.historyTable .css-1s4ojij-MuiTableHead-root{
-    background-color: #bdbdbd;
-}
-
-.historyTable thead{
-    background-color: #bdbdbd;
-}
-
 .editHistoryInfo {
     min-width: 100px !important;
 }

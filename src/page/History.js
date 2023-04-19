@@ -1,11 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FormControl } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import JSZip from "jszip";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "../css/History.css";
 import {
-  Pagination,
   TableBody,
   Table,
   TableCell,
@@ -15,8 +13,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
-  DialogActions,
   Stack,
   Typography,
   Button,
@@ -26,9 +22,8 @@ import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { async } from "q";
-import useExcelDownloader from "../hooks/useExcelDownloader";
 import * as XLSX from "xlsx";
+import axios from "axios";
 
 export default function History() {
   const navigate = useNavigate();
@@ -38,7 +33,7 @@ export default function History() {
   const [open, setOpen] = useState(false);
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
   const { appState, dispatch } = useContext(AppContext);
-  const [downloadData, setDownloadData] = useState("");
+  const [historyId, setHistoryId] = useState(-1)
 
   useEffect(() => {
     if (keySearch === "") {
@@ -95,68 +90,57 @@ export default function History() {
 
   const clickDetailHistory = (history) => {
     setOpen(true);
+    setHistoryId(history.idHistory)
     setDetailData(history);
   };
 
-  // useExcelDownloader(downloadData, "ten_file_excel.xlsx");
+  const getExcelData = async () => {
+    try {
+      const response = await axios({
+        url: `https://localhost:7101/api/History/download?IDHistory=${historyId}`,
+        method: "GET",
+        responseType: "arraybuffer",
+      });
+      if(response.status === 200){
+        toast.success("Tải xuống thành công")
+        return response.data;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const downloadExcel = (data, fileName) => {
-    if (!data || !fileName) return;
-
-    // Tạo một đối tượng Blob với dữ liệu Excel và kiểu MIME của file Excel
-    const blob = new Blob([data], {
-      encoding: "UTF-8",
-      type: "text/csv;charset=utf-8;",
+  const createExcelFile = (excelData) => {
+    const workbook = XLSX.read(excelData, { type: "array" });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
     });
+    const excelBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    return excelBlob;
+  };
 
-    // Tạo một URL tạm thời cho file Excel bằng cách sử dụng phương thức URL.createObjectURL()
-    const url = URL.createObjectURL(blob);
-
-    // Tạo một thẻ <a> để tạo link download
-    const a = document.createElement("a");
-
-    a.setAttribute(
-      "href",
-      "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(data)
-    );
-
-    // Thiết lập href của thẻ <a> bằng URL tạm thời
-    // a.href = url;
-
-    // Thiết lập tên file Excel cho thẻ <a>
-    a.download = fileName;
-
-    // Thêm thẻ <a> vào DOM
-    document.body.appendChild(a);
-
-    // Kích hoạt sự kiện click trên thẻ <a> để bắt đầu quá trình download
-    a.click();
-
-    // Xóa thẻ <a> khỏi DOM
-    document.body.removeChild(a);
-
-    // Xóa URL tạm thời
-    URL.revokeObjectURL(url);
+  const downloadExcelFile = (excelBlob) => {
+    const excelUrl = URL.createObjectURL(excelBlob);
+    const link = document.createElement("a");
+    link.href = excelUrl;
+    link.download = "excel_file.xlsx";
+    document.body.appendChild(link);
+    link.click();
   };
 
   const clickDownloadExcel = async () => {
     try {
-      const downloadEcelRes = await api.getHistoryDataDownloadExcel(
-        appState.jwtToken,
-        detailData.idHistory
-      );
-      console.log(downloadEcelRes);
-      if (downloadEcelRes.status === 200) {
-        // setDownloadData(downloadEcelRes.data);
-        downloadExcel(downloadEcelRes.data, "ten_file_excel.xlsx");
-        toast.success("Tải xuống thành công");
-      }
+      const excelData = await getExcelData();
+      const excelBlob = createExcelFile(excelData);
+      downloadExcelFile(excelBlob);
     } catch (error) {
       console.log(error);
     }
   };
-
-  console.log(detailHistorySlice);
 
   return (
     <div className="historyContainer">
@@ -178,7 +162,6 @@ export default function History() {
               maxHeight: 510,
               borderTop: "none",
               minWidth: 600,
-              // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
             }}
           >
             <Table stickyHeader aria-label="sticky table">

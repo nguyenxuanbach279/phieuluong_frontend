@@ -83,29 +83,31 @@ export default function Setting() {
     // console.log(newData)
 
     try {
-      console.log(values)
-      if (values.oldPassword == appState.accountInfo.password) {
-        const updateAccountRes = await api.updateAccount(
-          appState.jwtToken,
-          newData
-        );
-        if (updateAccountRes.status === 200) {
-          if (values.password !== "") {
-            toast.success("Cập nhập mật khẩu thành công");
-            setOpen(true);
-          } else {
-            const accountInfoRes = await api.getAccountInfo(
-              appState.jwtToken,
-              appState.accountInfo.id
-            );
-            const accountInfo = accountInfoRes.data.data;
-            console.log(accountInfoRes);
-            dispatch({
-              type: "SET_ACCOUNT_INFO",
-              accountInfo: accountInfo,
-            });
-            toast.success("Cập nhập thành công");
-          }
+      console.log(values);
+
+      const updateAccountRes = await api.updateAccount(
+        appState.jwtToken,
+        newData
+      );
+      if (updateAccountRes.status === 200) {
+        if (
+          values.password !== "" &&
+          values.oldPassword == appState.accountInfo.password
+        ) {
+          toast.success("Cập nhập mật khẩu thành công");
+          setOpen(true);
+        } else {
+          const accountInfoRes = await api.getAccountInfo(
+            appState.jwtToken,
+            appState.accountInfo.id
+          );
+          const accountInfo = accountInfoRes.data.data;
+          console.log(accountInfoRes);
+          dispatch({
+            type: "SET_ACCOUNT_INFO",
+            accountInfo: accountInfo,
+          });
+          toast.success("Cập nhập thành công");
         }
       } else {
         toast.error("Mật khẩu cũ không đúng");

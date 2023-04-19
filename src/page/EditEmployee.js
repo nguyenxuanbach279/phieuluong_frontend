@@ -215,9 +215,9 @@ export default function EditEmployee() {
         <p className="editEmployeeTitle">{location.pathname === "/appointment/employee/edit" ? "Chỉnh sửa thông tin nhân viên" : "Tạo nhân viên mới"}</p>
 
         <div className="editEmployeeAction">
-          <Button variant="contained" style={{ minWidth: 120, height: 50 }}>
+          {/* <Button variant="contained" style={{ minWidth: 120, height: 50 }}>
             Hủy
-          </Button>
+          </Button> */}
           {location.pathname === "/appointment/employee/edit" ? (
             <>
               <Button
