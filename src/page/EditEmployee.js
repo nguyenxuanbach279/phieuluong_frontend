@@ -35,6 +35,7 @@ export default function EditEmployee() {
   const [salaryMonth, setSalaryMonth] = useState(1);
   const [taxFee, setTaxFee] = useState("");
   const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState("");
+  const [employeeStatusPayment, setEmployeeStatusPayment] = useState("");
   const [employeeStatusEmployee, setEmployeeStatusEmployee] = useState(-1);
   const [employeeAdvance, setEmployeeAdvance] = useState("");
 
@@ -47,6 +48,8 @@ export default function EditEmployee() {
     "Bán hàng",
     "Hành chính",
   ];
+
+  const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   useEffect(() => {
     if (location.pathname === "/appointment/employee/edit") {
@@ -73,13 +76,19 @@ export default function EditEmployee() {
         setEmployeeCoefficyTimeKeeping(
           employeeDataRes.data.data.coefficyTimeKeeping
         );
-        setEmployeeDoB(moment(employeeDataRes.data.data.doB, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD"));
+        setEmployeeDoB(
+          moment(employeeDataRes.data.data.doB, "YYYY-MM-DDTHH:mm:ss").format(
+            "YYYY-MM-DD"
+          )
+        );
         setEmployeeInsurance(employeeDataRes.data.data.insurance);
         setSalaryMonth(employeeDataRes.data.data.month);
         setEmployeeStatusPaycheck(employeeDataRes.data.data.statusPaycheck);
+        setEmployeeStatusPayment(employeeDataRes.data.data.paymentStatus);
         setTaxFee(employeeDataRes.data.data.taxFee);
         setEmployeeAdvance(employeeDataRes.data.data.advance);
-        setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee)
+        setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee);
+        setSalaryMonth(employeeDataRes.data.data.month);
       }
     } catch (error) {
       console.log(error);
@@ -102,6 +111,14 @@ export default function EditEmployee() {
     setEmployeeCoefficyPower(e.target.value);
   };
 
+  const onChangeSalaryMonth = (e) => {
+    setSalaryMonth(e.target.value);
+  };
+
+  const onChangePaymentStatus = (e) => {
+    setEmployeeStatusPayment(e.target.value);
+  };
+  
   const onChangePhone = (e) => {
     setEmployeePhone(e.target.value);
   };
@@ -160,8 +177,8 @@ export default function EditEmployee() {
       insurance: employeeInsurance,
       advance: employeeAdvance,
       month: salaryMonth,
-      statusPaycheck: 0,
-      paymentStatus: 0,
+      statusPaycheck: employeeStatusPaycheck,
+      paymentStatus: employeeStatusPayment,
     };
 
     console.log(data);
@@ -192,7 +209,11 @@ export default function EditEmployee() {
   return (
     <div className="editEmployeeContainer">
       <div className="editEmployeeTitleBox">
-        <p className="editEmployeeTitle">{location.pathname === "/appointment/employee/edit" ? "Chỉnh sửa thông tin nhân viên" : "Tạo nhân viên mới"}</p>
+        <p className="editEmployeeTitle">
+          {location.pathname === "/appointment/employee/edit"
+            ? "Chỉnh sửa thông tin nhân viên"
+            : "Tạo nhân viên mới"}
+        </p>
 
         <div className="editEmployeeAction">
           {/* <Button variant="contained" style={{ minWidth: 120, height: 50 }}>
@@ -224,12 +245,23 @@ export default function EditEmployee() {
       <div className="editEmployeeContentBox">
         <div className="editEmployeeBox">
           <Stack flexDirection="column" rowGap={2} alignItems="center">
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
+            <Stack
+              flexDirection="row"
+              columnGap={2}
+              alignItems="center"
+              height={48}
+            >
               <Typography className="editEmployeeInfo">Họ và tên</Typography>
               <TextField
                 value={employeeName}
                 type="text"
-                style={{ width: 200 }}
+                sx={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangeName}
               />
             </Stack>
@@ -239,6 +271,12 @@ export default function EditEmployee() {
                 value={employeeCode}
                 type="text"
                 style={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangeEmployeeCode}
               />
             </Stack>
@@ -252,7 +290,11 @@ export default function EditEmployee() {
                     value={employeeEmail}
                     type="email"
                     style={{ width: 200 }}
-                    inputProps={{ readOnly: true }}
+                    inputProps={{
+                      readOnly: true,
+                      height: "23px",
+                      padding: "12.5px",
+                    }}
                   />
                 </Stack>
               </>
@@ -266,6 +308,12 @@ export default function EditEmployee() {
                     value={employeeEmail}
                     type="email"
                     style={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
                     onChange={onChangeEmployeeEmail}
                   />
                 </Stack>
@@ -278,10 +326,21 @@ export default function EditEmployee() {
                 value={employeePosition}
                 type="text"
                 style={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangePosition}
               />
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
+            <Stack
+              flexDirection="row"
+              columnGap={2}
+              alignItems="center"
+              height={48}
+            >
               <Typography className="editEmployeeInfo">Lương cơ bản</Typography>
               <TextField
                 value={employeeSalary}
@@ -292,6 +351,12 @@ export default function EditEmployee() {
                     <InputAdornment position="end">VNĐ</InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangeSalary}
               />
             </Stack>
@@ -301,6 +366,12 @@ export default function EditEmployee() {
                 value={employeeCoefficyPower}
                 type="text"
                 style={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangeCoefficyPower}
               />
             </Stack>
@@ -312,8 +383,29 @@ export default function EditEmployee() {
                 value={employeePhone}
                 type="text"
                 style={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
                 onChange={onChangePhone}
               />
+            </Stack>
+            <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Typography className="editEmployeeInfo">Thanh toán</Typography>
+              <FormControl style={{ width: 200, height: 48 }}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={employeeStatusPayment}
+                  onChange={onChangePaymentStatus}
+                  sx={{ height: 48 }}
+                >
+                  <MenuItem value="1">Chưa thanh toán</MenuItem>
+                  <MenuItem value="2">Đã thanh toán</MenuItem>
+                </Select>
+              </FormControl>
             </Stack>
           </Stack>
 
@@ -332,6 +424,12 @@ export default function EditEmployee() {
                     <InputAdornment position="end">công</InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
               />
             </Stack>
             <Stack
@@ -347,7 +445,13 @@ export default function EditEmployee() {
                 value={employeeDoB}
                 type="date"
                 onChange={onChangeEmployeeDoB}
-                sx={{width: 200}}
+                sx={{ width: 200 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
               />
             </Stack>
 
@@ -365,17 +469,23 @@ export default function EditEmployee() {
                     <InputAdornment position="end">VNĐ</InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
               />
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Trạng thái</Typography>
-              <FormControl style={{ width: 200, height: 56 }}>
+              <FormControl style={{ width: 200, height: 48 }}>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={employeeStatusEmployee}
                   onChange={onChangeStatusEmployee}
-                  sx={{height: 56}}
+                  sx={{ height: 48 }}
                 >
                   <MenuItem value="0">Chưa cập nhập</MenuItem>
                   <MenuItem value="1">Đang làm</MenuItem>
@@ -384,7 +494,12 @@ export default function EditEmployee() {
                 </Select>
               </FormControl>
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
+            <Stack
+              flexDirection="row"
+              columnGap={2}
+              alignItems="center"
+              height={48}
+            >
               <Typography className="editEmployeeInfo">Thuế TNCN</Typography>
               <TextField
                 value={taxFee}
@@ -396,10 +511,18 @@ export default function EditEmployee() {
                     <InputAdornment position="end">VNĐ</InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
               />
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Tiền ứng trước</Typography>
+              <Typography className="editEmployeeInfo">
+                Tiền ứng trước
+              </Typography>
               <TextField
                 value={employeeAdvance}
                 type="text"
@@ -410,19 +533,45 @@ export default function EditEmployee() {
                     <InputAdornment position="end">VNĐ</InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  style: {
+                    height: "23px",
+                    padding: "12.5px",
+                  },
+                }}
               />
             </Stack>
             <Stack flexDirection="row" columnGap={2} alignItems="center">
               <Typography className="editEmployeeInfo">Phòng ban</Typography>
-              <FormControl style={{ width: 200, height: 56 }}>
+              <FormControl style={{ width: 200, height: 48 }}>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={employeeDepartmentID}
                   onChange={onChangeDepartmentID}
-                  sx={{height: 56}}
+                  sx={{ height: 48 }}
                 >
                   {departments.map((item, index) => {
+                    return (
+                      <MenuItem value={index + 1} key={item}>
+                        {item}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Stack>
+            <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Typography className="editEmployeeInfo">Tháng</Typography>
+              <FormControl style={{ width: 200, height: 48 }}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={salaryMonth}
+                  onChange={onChangeSalaryMonth}
+                  sx={{ height: 48 }}
+                >
+                  {month.map((item, index) => {
                     return (
                       <MenuItem value={index + 1} key={item}>
                         {item}

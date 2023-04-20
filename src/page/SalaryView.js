@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../css/SalaryView.css";
 import {
   Button,
@@ -12,27 +12,24 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import { AppContext } from "../contexts/app.context";
 import api from "../services/api";
 import moment from "moment";
+import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
 export default function SalaryView() {
-  const { appState, dispatch } = useContext(AppContext);
   const [employeeDetail, setEmployeeDetail] = useState("");
   const [open, setOpen] = React.useState(true);
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const location = useLocation();
   const { search } = location;
   const id = search.slice(4);
 
-  // useEffect(() => {
-  //   getDetailEmployee();
-  // }, []);
-
   const getDetailEmployee = async () => {
     try {
-      const employeeDataRes = await api.getInfoEmployee(appState.jwtToken, id);
+      const employeeDataRes = await api.getInfoEmployeePrivate(id, password);
       if (employeeDataRes.status === 200) {
         setEmployeeDetail(employeeDataRes.data.data);
+        setOpen(false);
       }
     } catch (error) {
       console.log(error);
@@ -40,12 +37,12 @@ export default function SalaryView() {
   };
 
   const changePassword = (e) => {
-    setPassword(e.target.value)
-  }
+    setPassword(e.target.value);
+  };
 
   const clickSendPassword = () => {
-    
-  }
+    getDetailEmployee();
+  };
 
   const totalSalary =
     ((employeeDetail.basicSalary * employeeDetail.coefficyTimeKeeping) / 22) *
@@ -64,9 +61,11 @@ export default function SalaryView() {
     "Hành chính",
   ];
 
+  console.log(password);
+
   const submitSalary = async () => {
     try {
-      const updateStatusRes = api.updateEmployeePayCheckStatus(id, 2);
+      const updateStatusRes = await api.updateEmployeePayCheckStatus(id, 2);
       if (updateStatusRes.status === 200) {
         toast.success("Xác nhận phiếu lương thành công");
       }
@@ -75,18 +74,20 @@ export default function SalaryView() {
     }
   };
 
-  const reportSalary = () => {
+  const reportSalary = async () => {
     try {
-      const updateStatusRes = api.updateEmployeePayCheckStatus(id, 3);
+      const updateStatusRes = await api.updateEmployeePayCheckStatus(id, 3);
       if (updateStatusRes.status === 200) {
-        toast.success("Phản hồi của bạn đã được ghi nhận");
+        toast.success("Không xác nhận phiếu lương");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(employeeDetail);
+  const clickShowHidePassword = () => {
+    setIsShowPassword((pre) => !pre);
+  };
 
   return (
     <>
@@ -156,7 +157,9 @@ export default function SalaryView() {
                   <Typography className="salaryviewInfo">
                     Chỉ số chấm công:
                   </Typography>
-                  <Typography>{employeeDetail.coefficyTimeKeeping}</Typography>
+                  <Typography>
+                    {employeeDetail.coefficyTimeKeeping} công
+                  </Typography>
                 </Stack>
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">
                   <Typography className="salaryviewInfo">Ngày sinh:</Typography>
@@ -221,13 +224,32 @@ export default function SalaryView() {
         <DialogContent
           sx={{
             minWidth: 500,
-            minHeight: 50
+            minHeight: 50,
+            display: "flex"
           }}
         >
-          <TextField fullWidth type="text" variant="standard" value={password} onChange={changePassword}/>
+          <TextField
+            fullWidth
+            type={isShowPassword ? "text" : "password"}
+            variant="standard"
+            value={password}
+            onChange={changePassword}
+          />
+          <div
+            className="visibilityIconCreateAcc"
+            onClick={clickShowHidePassword}
+          >
+            {isShowPassword ? <MdVisibility /> : <MdOutlineVisibility />}
+          </div>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" sx={{width: 80, height: 40}} onClick={() => clickSendPassword}>Gửi</Button>
+          <Button
+            variant="contained"
+            sx={{ width: 80, height: 40 }}
+            onClick={clickSendPassword}
+          >
+            Gửi
+          </Button>
         </DialogActions>
       </Dialog>
     </>

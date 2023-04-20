@@ -30,6 +30,7 @@
     background-color: #fff;
     border-radius: 8px;
     padding: 10px 20px 20px;
+    overflow: hidden;
 }
 
 .form-control {
@@ -39,7 +40,7 @@
 .footerEmployeePage {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
+    margin-top: 16px;
     align-items: center;
 }
 

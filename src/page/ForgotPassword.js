@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -17,11 +18,13 @@ function ForgotPassword() {
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    console.log(values);
     try {
       const recoverPasswordRes = await api.forgotPassword(values.email);
-      if (recoverPasswordRes.status === 200) {
+      console.log(recoverPasswordRes);
+      if (recoverPasswordRes.data.status === 200) {
         navigate("/login");
+      } else if (recoverPasswordRes.data.status === 301) {
+        toast.error("Email không tồn tại");
       }
     } catch (error) {
       toast.error("error");
@@ -53,7 +56,9 @@ function ForgotPassword() {
           }}
           onClick={clickBackToLoginPage}
         >
-          <CiLogin />
+          <IconButton>
+            <CiLogin style={{ color: "#000" }} />
+          </IconButton>
         </div>
         <div className="loginTitleBox">
           <p className="loginTitle">Quên mật khẩu</p>

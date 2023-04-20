@@ -96,11 +96,10 @@ const getInfoEmployee = (jwtToken, id) => {
   });
 };
 
-const getInfoEmployeePrivate = (jwtToken, id, pass) => {
-  return api.get("Employee/detail", pass, {
+const getInfoEmployeePrivate = (id, pass) => {
+  return api.post("Client/detail", pass, {
     params: { id: id },
     headers: {
-      Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
     },
   });
@@ -152,7 +151,7 @@ const uploadExcel = (jwtToken, data) => {
 };
 
 const updateEmployeePayCheckStatus = (id, value) => {
-  return api.post(`Employee/update?ID=${id}&value=${value}`, {
+  return api.post(`Client/update?ID=${id}&value=${value}`, {
     headers: {
       accept: "text/plain",
     },
@@ -171,6 +170,16 @@ const getHistoryData = (jwtToken) => {
 const getHistoryDataByName = (jwtToken, name) => {
   return api.get("History/searchbyname", {
     params: { value: name },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getAccountByEmail = (jwtToken, key) => {
+  return api.get(`Admin/search`, {
+    params: { search: key },
     headers: {
       Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
@@ -209,5 +218,6 @@ export default {
   getHistoryData,
   getHistoryDataByName,
   getHistoryDataDownloadExcel,
-  getInfoEmployeePrivate
+  getInfoEmployeePrivate,
+  getAccountByEmail,
 };

@@ -26,6 +26,7 @@ import {
   DialogActions,
   Button,
   IconButton,
+  Paper,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
@@ -54,7 +55,7 @@ export default function MakeAppointment() {
   const [datetime, setDatetime] = useState(dayjs(new Date()));
   const [employeePrepareDelete, setEmployeePrepareDelete] = useState({});
   const [open, setOpen] = useState(false);
-  
+
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
@@ -225,6 +226,7 @@ export default function MakeAppointment() {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
         console.log(uploadFileRes);
+        getEmployeeList(1)
         toast.success("Upload thành công");
       }
     } catch (error) {
@@ -233,7 +235,7 @@ export default function MakeAppointment() {
     }
   };
 
-  console.log(employeeList);
+  console.log(employeeList)
 
   return (
     <>
@@ -275,10 +277,9 @@ export default function MakeAppointment() {
           <div className="employeeTable">
             <TableContainer
               sx={{
-                maxHeight: 460,
-                borderTop: "none",
-                minWidth: 600,
-                minHeight: 460,
+                height: 460,
+                minWidth: 800,
+                overflowX: "auto",
               }}
             >
               <Table stickyHeader aria-label="sticky table">
@@ -423,18 +424,23 @@ export default function MakeAppointment() {
               </FormControlMui>
               <Typography>Số lượng bản ghi: {totalEmployee}</Typography>
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
+            <Stack
+              flexDirection="row"
+              columnGap={2}
+              alignItems="center"
+              justifyContent="center"
+            >
               <Button
                 variant="contained"
                 onClick={clickCreateEmployeePage}
-                style={{ minWidth: 120, height: 50 }}
+                style={{ minWidth: 120, height: 40 }}
               >
                 Thêm nhân viên
               </Button>
               <Button
                 variant="contained"
                 onClick={handleShowModal}
-                style={{ minWidth: 120, height: 50 }}
+                style={{ minWidth: 120, height: 40 }}
               >
                 Gửi
               </Button>
@@ -515,10 +521,10 @@ export default function MakeAppointment() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} style={{ minWidth: 100 }}>
+          <Button variant="contained" onClick={handleClose} style={{ minWidth: 100 }}>
             Hủy
           </Button>
-          <Button onClick={clickDeleteEmployee} autoFocus>
+          <Button variant="contained" onClick={clickDeleteEmployee} autoFocus>
             Xóa nhân viên
           </Button>
         </DialogActions>

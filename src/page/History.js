@@ -170,8 +170,11 @@ export default function History() {
                   <TableCell sx={{ textAlign: "center", padding: "16px" }}>
                     STT
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", padding: "16px" }}>
+                  <TableCell sx={{ textAlign: "left", padding: "16px", width: 240 }}>
                     Họ tên
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "left", padding: "16px", width: 360 }}>
+                    Email
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", padding: "16px" }}>
                     Thời gian thực hiện
@@ -188,8 +191,11 @@ export default function History() {
                       <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                         {index + 1}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", padding: "12px" }}>
+                      <TableCell sx={{ textAlign: "left", padding: "12px" }}>
                         {history.namePerformer}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "left", padding: "12px" }}>
+                        {history.email}
                       </TableCell>
                       <TableCell sx={{ textAlign: "center", padding: "12px" }}>
                         {history.perforDate}
