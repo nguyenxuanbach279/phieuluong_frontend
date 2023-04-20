@@ -14,12 +14,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button
+  Button,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FormControl } from "react-bootstrap";
 
 export default function Account() {
   const navigate = useNavigate();
@@ -36,21 +37,43 @@ export default function Account() {
 
   useEffect(() => {
     if (appState.accountInfo.isAdmin == 1) {
-      getAccountList();
+      getAccountList(keySearch);
     } else {
       toast.error("Bạn cần cấp quyền");
     }
+  }, []);
+
+  useEffect(() => {
+    getAccountList(keySearch)
   }, [keySearch]);
 
-  const getAccountList = async () => {
-    try {
-      const accountListRes = await api.getAccountList(appState.jwtToken);
-      if (accountListRes.status === 200) {
-        setAccountList(accountListRes.data.data);
+  console.log(accountList)
+
+  const getAccountList = async (key) => {
+    console.log(key)
+    if (key !== "") {
+      try {
+        const accountListRes = await api.getAccountByEmail(
+          appState.jwtToken,
+          key
+        );
+        if (accountListRes.status === 200) {
+          setAccountList(accountListRes.data.data);
+        }
+      } catch (error) {
+        // xu ly loi
+        console.log(error);
       }
-    } catch (error) {
-      // xu ly loi
-      console.log(error);
+    } else {
+      try {
+        const accountListRes = await api.getAccountList(appState.jwtToken);
+        if (accountListRes.status === 200) {
+          setAccountList(accountListRes.data.data);
+        }
+      } catch (error) {
+        // xu ly loi
+        console.log(error);
+      }
     }
   };
 
@@ -75,7 +98,7 @@ export default function Account() {
       );
       if (deleteAccountRes.status === 200) {
         setOpen(false);
-        getAccountList();
+        getAccountList(keySearch);
         toast.success("Xóa tài khoản thành công");
       }
     } catch (error) {
@@ -87,23 +110,22 @@ export default function Account() {
     <div className="accountListContainer">
       <div className="accountListTitleBox">
         <p className="accountListTitle">Danh sách tài khoản</p>
-        {/* <FormControl
+        <FormControl
           name="keysearch"
           type="text"
           value={keySearch}
           onChange={onChangeKeySearch}
           placeholder="Type your email"
           className="keySearchInput"
-        /> */}
+        />
       </div>
       <div className="accountContentBox">
         <div className="accountTable">
           <TableContainer
             sx={{
-              maxHeight: 450,
+              height: 450,
               borderTop: "none",
               minWidth: 600,
-              // boxShadow: "rgba(0,0,0,0.24) 0px 4px 8px",
             }}
           >
             <Table stickyHeader aria-label="sticky table">
@@ -112,10 +134,14 @@ export default function Account() {
                   <TableCell sx={{ textAlign: "center", padding: "8px" }}>
                     STT
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                  <TableCell
+                    sx={{ textAlign: "left", padding: "8px", width: 240 }}
+                  >
                     Họ tên
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                  <TableCell
+                    sx={{ textAlign: "left", padding: "8px", width: 360 }}
+                  >
                     Email
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", padding: "8px" }}>
@@ -136,10 +162,10 @@ export default function Account() {
                       <TableCell sx={{ textAlign: "center", padding: "8px" }}>
                         {index + 1}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                      <TableCell sx={{ textAlign: "left", padding: "8px" }}>
                         {account.name}
                       </TableCell>
-                      <TableCell sx={{ textAlign: "center", padding: "8px" }}>
+                      <TableCell sx={{ textAlign: "left", padding: "8px" }}>
                         {account.email}
                       </TableCell>
                       <TableCell sx={{ textAlign: "center", padding: "8px" }}>
@@ -164,14 +190,9 @@ export default function Account() {
         </div>
 
         <div className="footerAccountPage">
-          {/* <Pagination
-            count={Math.ceil(totalAccount / pageSize)}
-            variant="outlined"
-            page={pageNumber}
-            shape="rounded"
-            onChange={onChangePage}
-          /> */}
-          <Button variant="contained" onClick={onClickCreateAccount}>Tạo tài khoản</Button>
+          <Button variant="contained" onClick={onClickCreateAccount}>
+            Tạo tài khoản
+          </Button>
         </div>
       </div>
       <Dialog
@@ -189,7 +210,11 @@ export default function Account() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleClose} style={{ minWidth: 80 }}>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            style={{ minWidth: 80 }}
+          >
             Hủy
           </Button>
           <Button variant="contained" onClick={clickDeleteAccount} autoFocus>

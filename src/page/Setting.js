@@ -75,32 +75,37 @@ export default function Setting() {
     };
 
     try {
-      const updateAccountRes = await api.updateAccount(
-        appState.jwtToken,
-        newData
-      );
-      if (updateAccountRes.status === 200) {
-        if (
-          values.password !== "" &&
-          values.oldPassword == appState.accountInfo.password
-        ) {
+      if (
+        values.password !== "" &&
+        values.oldPassword == appState.accountInfo.password
+      ) {
+        const updateAccountRes = await api.updateAccount(
+          appState.jwtToken,
+          newData
+        );
+        if (updateAccountRes.status === 200) {
           toast.success("Cập nhập mật khẩu thành công");
           setOpen(true);
         } else {
+          toast.error("Mật khẩu cũ không đúng");
+        }
+      } else {
+        const updateAccountRes = await api.updateAccount(
+          appState.jwtToken,
+          newData
+        );
+        if (updateAccountRes.status === 200) {
           const accountInfoRes = await api.getAccountInfo(
             appState.jwtToken,
             appState.accountInfo.id
           );
           const accountInfo = accountInfoRes.data.data;
-          console.log(accountInfoRes);
           dispatch({
             type: "SET_ACCOUNT_INFO",
             accountInfo: accountInfo,
           });
-          toast.success("Cập nhập thành công");
+          toast.success("Cập nhập thành công")
         }
-      } else {
-        toast.error("Mật khẩu cũ không đúng");
       }
     } catch (error) {
       console.log(error);
