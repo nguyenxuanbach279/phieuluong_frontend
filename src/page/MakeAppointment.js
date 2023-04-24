@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Form, FormControl, Modal } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { VscPreview } from "react-icons/vsc";
 import "../css/Account.css";
 import "../css/MakeAppointment.css";
 import {
@@ -26,11 +26,10 @@ import {
   DialogActions,
   Button,
   IconButton,
-  Paper,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -226,7 +225,7 @@ export default function MakeAppointment() {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
         console.log(uploadFileRes);
-        getEmployeeList(1)
+        getEmployeeList(1);
         toast.success("Upload thành công");
       }
     } catch (error) {
@@ -235,7 +234,7 @@ export default function MakeAppointment() {
     }
   };
 
-  console.log(employeeList)
+  console.log(employeeList);
 
   return (
     <>
@@ -285,7 +284,7 @@ export default function MakeAppointment() {
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>
+                    <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                       <Checkbox
                         value="all"
                         onChange={onChangeValue}
@@ -320,7 +319,7 @@ export default function MakeAppointment() {
                       Trạng thái
                     </TableCell>
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                      Chi tiết
+                      Xem trước
                     </TableCell>
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                       Xóa
@@ -333,8 +332,11 @@ export default function MakeAppointment() {
                       <TableRow
                         key={employee.id}
                         style={{ verticalAlign: "middle" }}
+                        hover
                       >
-                        <TableCell>
+                        <TableCell
+                          sx={{ textAlign: "center", padding: "4px 12px" }}
+                        >
                           <Checkbox
                             value={employee.email}
                             onChange={onChangeValue}
@@ -343,7 +345,9 @@ export default function MakeAppointment() {
                           />
                         </TableCell>
                         <TableCell>{employee.employeeCode}</TableCell>
-                        <TableCell>{employee.name}</TableCell>
+                        <TableCell onClick={() => clickEditEmployee(employee)}>
+                          <Link style={{ color: "#000" }}>{employee.name}</Link>
+                        </TableCell>
                         <TableCell>{employee.email}</TableCell>
                         <TableCell
                           style={{
@@ -378,10 +382,8 @@ export default function MakeAppointment() {
                           {paycheck[employee.statusPaycheck]}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          <IconButton
-                            onClick={() => clickEditEmployee(employee)}
-                          >
-                            <BsThreeDotsVertical />
+                          <IconButton>
+                            <VscPreview />
                           </IconButton>
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
@@ -521,7 +523,11 @@ export default function MakeAppointment() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleClose} style={{ minWidth: 100 }}>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            style={{ minWidth: 100 }}
+          >
             Hủy
           </Button>
           <Button variant="contained" onClick={clickDeleteEmployee} autoFocus>
