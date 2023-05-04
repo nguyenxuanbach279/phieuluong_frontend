@@ -30,7 +30,7 @@ export default function History() {
   const [open, setOpen] = useState(false);
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
   const { appState } = useContext(AppContext);
-  const [historyId, setHistoryId] = useState(-1)
+  const [historyId, setHistoryId] = useState(-1);
 
   useEffect(() => {
     if (keySearch === "") {
@@ -87,7 +87,7 @@ export default function History() {
 
   const clickDetailHistory = (history) => {
     setOpen(true);
-    setHistoryId(history.idHistory)
+    setHistoryId(history.idHistory);
     setDetailData(history);
   };
 
@@ -99,10 +99,10 @@ export default function History() {
         responseType: "arraybuffer",
         headers: {
           Authorization: `Bearer ${appState.jwtToken}`,
-        }
+        },
       });
-      if(response.status === 200){
-        toast.success("Tải xuống thành công")
+      if (response.status === 200) {
+        toast.success("Tải xuống thành công");
         return response.data;
       }
     } catch (error) {
@@ -170,10 +170,14 @@ export default function History() {
                   <TableCell sx={{ textAlign: "center", padding: "16px" }}>
                     STT
                   </TableCell>
-                  <TableCell sx={{ textAlign: "left", padding: "16px", width: 240 }}>
+                  <TableCell
+                    sx={{ textAlign: "left", padding: "16px", width: 240 }}
+                  >
                     Họ tên
                   </TableCell>
-                  <TableCell sx={{ textAlign: "left", padding: "16px", width: 360 }}>
+                  <TableCell
+                    sx={{ textAlign: "left", padding: "16px", width: 360 }}
+                  >
                     Email
                   </TableCell>
                   <TableCell sx={{ textAlign: "center", padding: "16px" }}>
@@ -245,18 +249,20 @@ export default function History() {
                 })}
               </Stack>
             </Stack>
-            {detailData?.detail?.includes("Đã thêm") &&
+            <Stack flexDirection="row" alignItems="center">
+              <Typography className="editHistoryInfo">File excel :</Typography>
+              {detailData?.detail?.includes("Đã thêm") &&
               detailData?.detail?.includes("Đã update") &&
-              detailData?.detail?.includes("Bị lỗi") && (
-                <Stack flexDirection="row" alignItems="center">
-                  <Typography className="editHistoryInfo">
-                    File excel :
-                  </Typography>
+              detailData?.detail?.includes("Bị lỗi") ? (
+                <>
                   <Button variant="contained" onClick={clickDownloadExcel}>
                     Download
                   </Button>
-                </Stack>
+                </>
+              ) : (
+                <>Không</>
               )}
+            </Stack>
           </Stack>
         </DialogContent>
       </Dialog>

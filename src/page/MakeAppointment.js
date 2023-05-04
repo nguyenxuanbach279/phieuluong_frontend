@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Form, FormControl, Modal } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
+import { BiDownload } from "react-icons/bi";
 import "../css/Account.css";
 import "../css/MakeAppointment.css";
 import {
@@ -38,10 +39,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import moment from "moment/moment";
+import * as XLSX from "xlsx";
+import axios from "axios";
+
 
 export default function MakeAppointment() {
   const navigate = useNavigate();
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState, dispatch, setIsLoading } = useContext(AppContext);
   const [employeeList, setEmployeeList] = useState([]);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -54,6 +58,8 @@ export default function MakeAppointment() {
   const [datetime, setDatetime] = useState(dayjs(new Date()));
   const [employeePrepareDelete, setEmployeePrepareDelete] = useState({});
   const [open, setOpen] = useState(false);
+  const [openSalaryPreview, setOpenSalaryPreview] = useState(false);
+  const [employeeDetail, setEmployeeDetail] = useState();
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -63,11 +69,16 @@ export default function MakeAppointment() {
     setOpen(false);
   };
 
+  const handleCloseSalaryPreview = () => {
+    setEmployeeDetail();
+    setOpenSalaryPreview(false);
+  };
+
   useEffect(() => {
     getEmployeeList(1);
   }, [keySearch, pageSize]);
 
-  const departmants = [
+  const departments = [
     "Giám đốc",
     "Quản lý",
     "Sản xuất",
@@ -179,13 +190,15 @@ export default function MakeAppointment() {
 
   const clickSendPaycheck = async () => {
     const data = employeeListChoosed();
+    setIsLoading(true)
+    setShowModal(false);
     if (typeOfAppointment == "Gửi luôn") {
       try {
         const sendNowRes = await api.sendPaycheckNow(appState.jwtToken, data);
         if (sendNowRes.status === 200) {
           toast.success("Gửi thành công");
-          setShowModal(false);
         }
+        setIsLoading(false)
       } catch (error) {
         console.log(error);
       }
@@ -224,7 +237,6 @@ export default function MakeAppointment() {
     try {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
-        console.log(uploadFileRes);
         getEmployeeList(1);
         toast.success("Upload thành công");
       }
@@ -234,7 +246,71 @@ export default function MakeAppointment() {
     }
   };
 
-  console.log(employeeList);
+  const totalSalary = 1000000;
+
+  const clickPreviewEmployee = async (employee) => {
+    setOpenSalaryPreview(true);
+    try {
+      const employeeDataRes = await api.getInfoEmployee(
+        appState.jwtToken,
+        employee.id
+      );
+      if (employeeDataRes.status === 200) {
+        setEmployeeDetail(employeeDataRes.data.data);
+      }
+    } catch (error) {}
+  };
+
+  const getExcelData = async () => {
+    try {
+      const response = await axios({
+        url: `https://localhost:7101/api/Employee/ExportToExcel`,
+        method: "GET",
+        responseType: "arraybuffer",
+        headers: {
+          Authorization: `Bearer ${appState.jwtToken}`,
+        },
+      });
+      if (response.status === 200) {
+        toast.success("Tải xuống thành công");
+        return response.data;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createExcelFile = (excelData) => {
+    const workbook = XLSX.read(excelData, { type: "array" });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    return excelBlob;
+  };
+
+  const downloadExcelFile = (excelBlob) => {
+    const excelUrl = URL.createObjectURL(excelBlob);
+    const link = document.createElement("a");
+    link.href = excelUrl;
+    link.download = "excel_file.xlsx";
+    document.body.appendChild(link);
+    link.click();
+  };
+
+  const clickExportExcel = async () => {
+    try {
+      const excelData = await getExcelData();
+      const excelBlob = createExcelFile(excelData);
+      downloadExcelFile(excelBlob);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -259,6 +335,20 @@ export default function MakeAppointment() {
                 alignItems: "center",
                 columnGap: 4,
               }}
+              onClick={() => clickExportExcel()}
+            >
+              Export
+              <BiDownload fontSize="20px"/>
+            </Button>
+            <Button
+              variant="contained"
+              component="label"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                columnGap: 4,
+              }}
             >
               Upload
               <input
@@ -268,7 +358,7 @@ export default function MakeAppointment() {
                 type="file"
                 onChange={onChangeFile}
               />
-              <AiOutlineUpload />
+              <AiOutlineUpload fontSize="20px"/>
             </Button>
           </div>
         </div>
@@ -359,7 +449,7 @@ export default function MakeAppointment() {
                           {employee.currentLevel}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          {departmants[employee.departmentID - 1]}
+                          {departments[employee.departmentID - 1]}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           {employee.month}
@@ -382,7 +472,9 @@ export default function MakeAppointment() {
                           {paycheck[employee.statusPaycheck]}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          <IconButton>
+                          <IconButton
+                            onClick={() => clickPreviewEmployee(employee)}
+                          >
                             <VscPreview />
                           </IconButton>
                         </TableCell>
@@ -421,7 +513,7 @@ export default function MakeAppointment() {
                 >
                   <MenuItem value={8}>8</MenuItem>
                   <MenuItem value={16}>16</MenuItem>
-                  <MenuItem value={24}>20</MenuItem>
+                  <MenuItem value={totalEmployee}>Tất cả</MenuItem>
                 </Select>
               </FormControlMui>
               <Typography>Số lượng bản ghi: {totalEmployee}</Typography>
@@ -443,6 +535,7 @@ export default function MakeAppointment() {
                 variant="contained"
                 onClick={handleShowModal}
                 style={{ minWidth: 120, height: 40 }}
+                disabled={!Boolean(selected.length)}
               >
                 Gửi
               </Button>
@@ -510,7 +603,7 @@ export default function MakeAppointment() {
       </Modal>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={handleCloseSalaryPreview}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -534,6 +627,133 @@ export default function MakeAppointment() {
             Xóa nhân viên
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openSalaryPreview}
+        onClose={handleCloseSalaryPreview}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          "& .MuiDialog-container": {
+            "& .MuiPaper-root": {
+              width: "100%",
+              maxWidth: "1000px", // Set your width here
+            },
+          },
+        }}
+      >
+        {employeeDetail && (
+          <div className="salaryViewBox">
+            <p className="salaryViewTitle">
+              Xác thực phiếu lương tháng{" "}
+              {employeeDetail.month < 10
+                ? `0${employeeDetail.month}`
+                : employeeDetail.month}
+            </p>
+            <div className="salaryDetail">
+              <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">
+                    Họ và tên:
+                  </Typography>
+                  <Typography>{employeeDetail.name}</Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">
+                    Mã nhân viên:
+                  </Typography>
+                  <Typography>{employeeDetail.employeeCode}</Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">
+                    Địa chỉ gmail:
+                  </Typography>
+                  <Typography>{employeeDetail.email}</Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">Chức vụ:</Typography>
+                  <Typography>{employeeDetail.currentLevel}</Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">
+                    Lương cơ bản:
+                  </Typography>
+                  <Typography>
+                    {employeeDetail?.basicSalary?.toLocaleString("it-IT")}{" "}
+                    <span style={{ fontSize: 14 }}>VNĐ</span>
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">Hệ số:</Typography>
+                  <Typography>
+                    {employeeDetail.coefficyPower?.toFixed(2)}
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="editEmployeeInfo">
+                    Số điện thoại:
+                  </Typography>
+                  <Typography>{employeeDetail.phone}</Typography>
+                </Stack>
+              </Stack>
+              <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">Phòng ban:</Typography>
+                  <Typography>
+                    {departments[employeeDetail.departmentID]}
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">
+                    Chỉ số chấm công:
+                  </Typography>
+                  <Typography>
+                    {employeeDetail.coefficyTimeKeeping} công
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">Ngày sinh:</Typography>
+                  <Typography>
+                    {moment(employeeDetail.doB, "YYYY-MM-DDTHH:mm:ss").format(
+                      "DD-MM-YYYY"
+                    )}
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">
+                    Tiền bảo hiểm:
+                  </Typography>
+                  <Typography>
+                    {employeeDetail.insurance?.toLocaleString("it-IT")}{" "}
+                    <span style={{ fontSize: 14 }}>VNĐ</span>
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">Thuế TNCN:</Typography>
+                  <Typography>
+                    {employeeDetail.taxFee?.toLocaleString("it-IT")}{" "}
+                    <span style={{ fontSize: 14 }}>VNĐ</span>
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">
+                    Tiền ứng trước:
+                  </Typography>
+                  <Typography>
+                    {employeeDetail.advance?.toLocaleString("it-IT")}{" "}
+                    <span style={{ fontSize: 14 }}>VNĐ</span>
+                  </Typography>
+                </Stack>
+              </Stack>
+            </div>
+            <div className="totalSalary">
+              <p>
+                Tổng lương được nhận: {totalSalary?.toLocaleString("it-IT")}{" "}
+                <span style={{ fontSize: 14 }}>VNĐ</span>
+              </p>
+            </div>
+          </div>
+        )}
       </Dialog>
     </>
   );
