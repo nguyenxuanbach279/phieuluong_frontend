@@ -198,6 +198,15 @@ const getHistoryDataDownloadExcel = (jwtToken, id) => {
   });
 };
 
+const exportToExcel = (jwtToken) => {
+  return api.get("Employee/ExportToExcel", {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  })
+}
+
 export default {
   getEmployeeList,
   login,
@@ -220,4 +229,5 @@ export default {
   getHistoryDataDownloadExcel,
   getInfoEmployeePrivate,
   getAccountByEmail,
+  exportToExcel,
 };

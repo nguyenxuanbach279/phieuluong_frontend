@@ -35,10 +35,14 @@ function LoginPage() {
   };
 
   const handleSubmit = async (values) => {
+    dispatch({
+      type: "IS_LOADING",
+      isLoading: true,
+    });
     try {
       const loginDataRes = await api.login(values.email, values.password);
       const userDecode = loginDataRes.data.data;
-      const user = jwtDecode(loginDataRes.data.data); 
+      const user = jwtDecode(loginDataRes.data.data);
       dispatch({
         type: "SET_JWT_TOKEN_ACTION",
         jwtToken: userDecode,
@@ -55,7 +59,10 @@ function LoginPage() {
         type: "SET_ACCOUNT_INFO",
         accountInfo: accountInfo,
       });
-
+      dispatch({
+        type: "IS_LOADING",
+        isLoading: false,
+      });
       navigate("/appointment");
     } catch (error) {
       toast.error("error");
@@ -63,8 +70,8 @@ function LoginPage() {
   };
 
   const clickForgotPassword = () => {
-    navigate("/forgotPassword")
-  }
+    navigate("/forgotPassword");
+  };
 
   return (
     <div className="loginPageContainer">
@@ -125,10 +132,11 @@ function LoginPage() {
                   {isShowPassword ? <MdVisibility /> : <MdOutlineVisibility />}
                 </i>
               </Form.Group>
-              <div className="forgotPasswordBox" onClick={() => clickForgotPassword()}>
-                <p className="forgotPasswordText">
-                  Quên mật khẩu?
-                </p>
+              <div
+                className="forgotPasswordBox"
+                onClick={() => clickForgotPassword()}
+              >
+                <p className="forgotPasswordText">Quên mật khẩu?</p>
               </div>
               <div className="loginButtonBox">
                 <div className="btnBg"></div>

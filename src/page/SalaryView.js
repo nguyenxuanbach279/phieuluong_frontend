@@ -44,12 +44,13 @@ export default function SalaryView() {
     getDetailEmployee();
   };
 
-  const totalSalary =
+  const totalSalary = Math.floor(
     ((employeeDetail.basicSalary * employeeDetail.coefficyTimeKeeping) / 22) *
       employeeDetail.coefficyPower -
-    employeeDetail.insurance -
-    employeeDetail.taxFee -
-    employeeDetail.advance;
+      employeeDetail.insurance -
+      employeeDetail.taxFee -
+      employeeDetail.advance
+  );
 
   const departments = [
     "Giám đốc",
@@ -225,7 +226,7 @@ export default function SalaryView() {
           sx={{
             minWidth: 500,
             minHeight: 50,
-            display: "flex"
+            display: "flex",
           }}
         >
           <TextField

@@ -47,10 +47,8 @@ export default function Account() {
     getAccountList(keySearch)
   }, [keySearch]);
 
-  console.log(accountList)
 
   const getAccountList = async (key) => {
-    console.log(key)
     if (key !== "") {
       try {
         const accountListRes = await api.getAccountByEmail(

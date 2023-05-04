@@ -16,21 +16,32 @@ import AppContextProvider, { AppContext } from "./contexts/app.context";
 import { ToastContainer } from "react-toastify";
 import ForgotPassword from "./page/ForgotPassword";
 import SalaryView from "./page/SalaryView";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import EditEmployee from "./page/EditEmployee";
 import NotFound from "./page/NotFound";
+import { LoadingSpinner } from "./components";
 
 function App() {
+  const { appState, dispatch, isLoading } = useContext(AppContext);
   return (
-    <AppContextProvider>
+    <>
+      {isLoading && <LoadingSpinner />}
       <Routes>
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/paycheck" element={<SalaryView />} />
         <Route exact path="/forgotPassword" element={<ForgotPassword />} />
         <Route exact path="/" element={<HomePage />}>
           <Route exact path="/account" element={<Account />} />
-          <Route exact path="/appointment/employee/edit" element={<EditEmployee />} />
-          <Route exact path="/appointment/employee/create" element={<EditEmployee />} />
+          <Route
+            exact
+            path="/appointment/employee/edit"
+            element={<EditEmployee />}
+          />
+          <Route
+            exact
+            path="/appointment/employee/create"
+            element={<EditEmployee />}
+          />
           <Route exact path="/account/create" element={<CreateAccount />} />
           <Route exact path="/history" element={<History />} />
           <Route exact path="/appointment" element={<MakeAppointment />} />
@@ -47,7 +58,7 @@ function App() {
         draggable
         position="bottom-center"
       />
-    </AppContextProvider>
+    </>
   );
 }
 
