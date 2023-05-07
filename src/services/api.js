@@ -11,6 +11,14 @@ const login = (email, password) => {
   });
 };
 
+const logout = () => {
+  return api.get("Account/logout", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 const getEmployeeList = (jwtToken, page, size, search) => {
   return api.post("Employee/filter", JSON.stringify(search), {
     params: { pageNumber: page ? page : 1, pageSize: size },
@@ -167,6 +175,16 @@ const getHistoryData = (jwtToken) => {
   });
 };
 
+const getHistoryDetailData = (jwtToken, id) => {
+  return api.get("History/getDetailHistory", {
+    params: { IDHistory: id },
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 const getHistoryDataByName = (jwtToken, name) => {
   return api.get("History/searchbyname", {
     params: { value: name },
@@ -204,12 +222,13 @@ const exportToExcel = (jwtToken) => {
       Authorization: `Bearer ${jwtToken}`,
       "Content-Type": "application/json",
     },
-  })
-}
+  });
+};
 
 export default {
   getEmployeeList,
   login,
+  logout,
   getAccountList,
   getAccountInfo,
   createNewAccount,
@@ -230,4 +249,5 @@ export default {
   getInfoEmployeePrivate,
   getAccountByEmail,
   exportToExcel,
+  getHistoryDetailData,
 };

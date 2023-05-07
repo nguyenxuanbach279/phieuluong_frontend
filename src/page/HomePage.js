@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { SideBar } from "../components";
 import { AppContext } from "../contexts/app.context";
 import "../css/HomePage.css";
+import api from "../services/api";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -11,15 +12,19 @@ export default function HomePage() {
   const { appState, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    if (appState == null || appState.loginUser == null ) {
+    if (appState == null || appState.loginUser == null) {
       navigate("/login");
-    }
-    else if(location.pathname === "/"){
+    } else if (location.pathname === "/") {
       navigate("/appointment");
     }
   }, []);
 
-  const onLogout = () => {
+  const onLogout = async () => {
+    try {
+      const logoutRes = await api.logout();
+    } catch (error) {
+      console.log(error);
+    }
     navigate("/login");
     dispatch({
       type: "RESET_STATE",
@@ -38,12 +43,12 @@ export default function HomePage() {
           <div className="userInfoBox">
             <div className="userInfo">
               <p className="userName">
-                {appState.accountInfo
-                  ? appState.accountInfo.name
-                  : "User"}
+                {appState.accountInfo ? appState.accountInfo?.name : "User"}
               </p>
               <p className="userPosition">
-                {appState.accountInfo && appState.accountInfo.isAdmin === 0 ? "Kế toán" : "Quản lý"}
+                {appState.accountInfo && appState.accountInfo?.isAdmin === 0
+                  ? "Kế toán"
+                  : "Quản lý"}
               </p>
             </div>
             <div className="logoutButtonBox">

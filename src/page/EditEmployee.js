@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import "../css/EditEmployee.css";
 import {
   Button,
@@ -35,9 +35,10 @@ export default function EditEmployee() {
   const [salaryMonth, setSalaryMonth] = useState(1);
   const [taxFee, setTaxFee] = useState("");
   const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState("");
-  const [employeeStatusPayment, setEmployeeStatusPayment] = useState("");
+  const [employeeStatusPayment, setEmployeeStatusPayment] = useState(0);
   const [employeeStatusEmployee, setEmployeeStatusEmployee] = useState(-1);
   const [employeeAdvance, setEmployeeAdvance] = useState("");
+  const [totalSalary, setTotalSalary] = useState(0);
 
   const departments = [
     "Giám đốc",
@@ -50,6 +51,27 @@ export default function EditEmployee() {
   ];
 
   const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  useEffect(() => {
+    setTotalSalary(
+      Math.floor(
+        ((employeeSalary * employeeCoefficyTimeKeeping) / 22) *
+          employeeCoefficyPower -
+          employeeInsurance -
+          taxFee -
+          employeeAdvance
+      )
+    );
+  }, [
+    employeeSalary,
+    employeeCoefficyTimeKeeping,
+    employeeCoefficyPower,
+    employeeInsurance,
+    taxFee,
+    employeeAdvance,
+  ]);
+
+  console.log(totalSalary);
 
   useEffect(() => {
     if (location.pathname === "/appointment/employee/edit") {
@@ -89,12 +111,13 @@ export default function EditEmployee() {
         setEmployeeAdvance(employeeDataRes.data.data.advance);
         setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee);
         setSalaryMonth(employeeDataRes.data.data.month);
+        setTotalSalary(employeeDataRes.data.data.finalSalary)
       }
     } catch (error) {
       console.log(error);
     }
   };
-
+console.log(employeeDetail)
   const onChangeName = (e) => {
     setEmployeeName(e.target.value);
   };
@@ -118,7 +141,7 @@ export default function EditEmployee() {
   const onChangePaymentStatus = (e) => {
     setEmployeeStatusPayment(e.target.value);
   };
-  
+
   const onChangePhone = (e) => {
     setEmployeePhone(e.target.value);
   };
@@ -179,6 +202,7 @@ export default function EditEmployee() {
       month: salaryMonth,
       statusPaycheck: employeeStatusPaycheck,
       paymentStatus: employeeStatusPayment,
+      finalSalary: 1000000,
     };
 
     console.log(data);
@@ -291,9 +315,11 @@ export default function EditEmployee() {
                     type="email"
                     style={{ width: 200 }}
                     inputProps={{
-                      readOnly: true,
-                      height: "23px",
-                      padding: "12.5px",
+                      style: {
+                        readOnly: true,
+                        height: "23px",
+                        padding: "12.5px",
+                      },
                     }}
                   />
                 </Stack>
@@ -402,8 +428,8 @@ export default function EditEmployee() {
                   onChange={onChangePaymentStatus}
                   sx={{ height: 48 }}
                 >
-                  <MenuItem value="1">Chưa thanh toán</MenuItem>
-                  <MenuItem value="2">Đã thanh toán</MenuItem>
+                  <MenuItem value="0">Chưa thanh toán</MenuItem>
+                  <MenuItem value="1">Đã thanh toán</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -580,6 +606,14 @@ export default function EditEmployee() {
                   })}
                 </Select>
               </FormControl>
+            </Stack>
+          </Stack>
+
+          <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
+            <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Typography width="280px">
+                Tổng lương nhận: {totalSalary.toLocaleString("it-IT")} VNĐ
+              </Typography>
             </Stack>
           </Stack>
         </div>

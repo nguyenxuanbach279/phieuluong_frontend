@@ -20,6 +20,7 @@ import { useContext, useEffect } from "react";
 import EditEmployee from "./page/EditEmployee";
 import NotFound from "./page/NotFound";
 import { LoadingSpinner } from "./components";
+import HistoryDetail from "./page/HistoryDetail";
 
 function App() {
   const { appState, dispatch, isLoading } = useContext(AppContext);
@@ -44,6 +45,11 @@ function App() {
           />
           <Route exact path="/account/create" element={<CreateAccount />} />
           <Route exact path="/history" element={<History />} />
+          <Route
+            exact
+            path="/history-detail/:idHistory"
+            element={<HistoryDetail />}
+          />
           <Route exact path="/appointment" element={<MakeAppointment />} />
           <Route exact path="/setting" element={<Setting />} />
         </Route>
