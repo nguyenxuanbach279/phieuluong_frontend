@@ -199,7 +199,7 @@ export default function SalaryView() {
             </div>
             <div className="totalSalary">
               <p>
-                Tổng lương được nhận: {totalSalary?.toLocaleString("it-IT")}{" "}
+                Tổng lương được nhận: {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
                 <span style={{ fontSize: 14 }}>VNĐ</span>
               </p>
             </div>

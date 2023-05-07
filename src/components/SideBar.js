@@ -6,6 +6,7 @@ import { BiHistory } from "react-icons/bi";
 import { AiOutlineSetting } from "react-icons/ai";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { AppContext } from "../contexts/app.context";
+import LogoIcon from "../images/logo.png";
 
 function SideBar() {
   const { appState, dispatch } = useContext(AppContext);
@@ -20,7 +21,7 @@ function SideBar() {
   const menuItemAdmin = [
     {
       path: "/appointment",
-      name: "Đặt lịch",
+      name: "Bảng lương",
       icon: <BsCalendar3 />,
     },
     {
@@ -30,12 +31,12 @@ function SideBar() {
     },
     {
       path: "/setting",
-      name: "Cài đặt tài khoản",
+      name: "Cài đặt",
       icon: <AiOutlineSetting />,
     },
     {
       path: "/account",
-      name: "Tạo tài khoản",
+      name: "Tài khoản",
       icon: <MdOutlineAccountCircle />,
     },
   ];
@@ -61,7 +62,8 @@ function SideBar() {
   return (
     <div className="sidebar">
       <div className="systemNameBox">
-        <p className="systemName">Hệ thống ABC</p>
+        {/* <img src={LogoIcon} alt="logo img" style={{width:"32px", height: "32x"}}/> */}
+        <p className="systemName">Quản lý lương</p>
       </div>
       <div className="sidebarMenuBox">
         {appState.accountInfo.isAdmin == 1 ? (
@@ -71,7 +73,9 @@ function SideBar() {
                 <div
                   key={index}
                   className={
-                    location.pathname.includes(item.path) ? "itemBox active" : "itemBox"
+                    location.pathname.includes(item.path)
+                      ? "itemBox active"
+                      : "itemBox"
                   }
                   // onClick={() => onClickItem(index)}
                 >

@@ -42,7 +42,6 @@ import moment from "moment/moment";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
-
 export default function MakeAppointment() {
   const navigate = useNavigate();
   const { appState, dispatch, setIsLoading } = useContext(AppContext);
@@ -190,7 +189,7 @@ export default function MakeAppointment() {
 
   const clickSendPaycheck = async () => {
     const data = employeeListChoosed();
-    setIsLoading(true)
+    setIsLoading(true);
     setShowModal(false);
     if (typeOfAppointment == "Gửi luôn") {
       try {
@@ -198,7 +197,7 @@ export default function MakeAppointment() {
         if (sendNowRes.status === 200) {
           toast.success("Gửi thành công");
         }
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -219,6 +218,7 @@ export default function MakeAppointment() {
         );
         if (sendNowRes.status === 200) {
           toast.success("Đặt lịch thành công");
+          setIsLoading(false);
           setShowModal(false);
         }
       } catch (error) {
@@ -233,12 +233,14 @@ export default function MakeAppointment() {
     Object.values(temp).forEach((file) => {
       data.append("fileExcel", file);
     });
-
     try {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
         getEmployeeList(1);
         toast.success("Upload thành công");
+        if(e) {
+          e.target.files = null;
+        }
       }
     } catch (error) {
       toast.error("error");
@@ -272,8 +274,9 @@ export default function MakeAppointment() {
         },
       });
       if (response.status === 200) {
+        window.open('https://localhost:7101/api/Employee/ExportToExcel')
         toast.success("Tải xuống thành công");
-        return response.data;
+        // return response.data; ms download dc
       }
     } catch (error) {
       console.error(error);
@@ -338,7 +341,7 @@ export default function MakeAppointment() {
               onClick={() => clickExportExcel()}
             >
               Export
-              <BiDownload fontSize="20px"/>
+              <BiDownload fontSize="20px" />
             </Button>
             <Button
               variant="contained"
@@ -358,7 +361,7 @@ export default function MakeAppointment() {
                 type="file"
                 onChange={onChangeFile}
               />
-              <AiOutlineUpload fontSize="20px"/>
+              <AiOutlineUpload fontSize="20px" />
             </Button>
           </div>
         </div>
