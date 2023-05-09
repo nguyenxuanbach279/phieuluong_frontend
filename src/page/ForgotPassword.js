@@ -12,7 +12,7 @@ import { IconButton } from "@mui/material";
 import { AppContext } from "../contexts/app.context";
 
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Required"),
+  email: Yup.string().email("Email không phù hợp").required("Trường này bắt buộc nhập"),
 });
 
 function ForgotPassword() {

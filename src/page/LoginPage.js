@@ -12,11 +12,11 @@ import { AppContext } from "../contexts/app.context";
 import { useNavigate } from "react-router-dom";
 
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Required"),
+  email: Yup.string().email("Email không phù hợp").required("Trường này bắt buộc nhập"),
   password: Yup.string()
-    .min(2, "Too Short!")
-    .max(24, "Too Long!")
-    .required("Required"),
+  .min(2, "Mật khẩu quá ngắn")
+  .max(24, "Mật khẩu quá dài")
+  .required("Trường này bắt buộc nhập"),
 });
 
 function LoginPage() {
