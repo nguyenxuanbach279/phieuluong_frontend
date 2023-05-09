@@ -326,7 +326,7 @@ export default function MakeAppointment() {
     try {
       if (selected.length === 0) {
         const response = await axios({
-          url: `https://localhost:7101/api/Employee/ExportToExcel`,
+          url: `https://localhost:7101/api/Client/ExportToExcel`,
           method: "GET",
           responseType: "arraybuffer",
           headers: {
@@ -334,8 +334,9 @@ export default function MakeAppointment() {
           },
         });
         if (response.status === 200) {
-          window.open("https://localhost:7101/api/Employee/ExportToExcel");
+          window.open("https://localhost:7101/api/Client/ExportToExcel");
           toast.success("Tải xuống thành công");
+          setIsLoading(false)
           // return response.data; ms download dc
         }
       } else {
@@ -343,7 +344,7 @@ export default function MakeAppointment() {
         const listId = temp.map((item) => item.id);
         console.log(listId);
         const response = await axios({
-          url: `https://localhost:7101/api/Employee/ExportByID`,
+          url: `https://localhost:7101/api/Client/ExportByID`,
           method: "POST",
           data: listId,
           responseType: "arraybuffer",
@@ -354,6 +355,7 @@ export default function MakeAppointment() {
         if (response.status === 200) {
           // window.open('https://localhost:7101/api/Employee/ExportToExcel')
           toast.success("Tải xuống thành công");
+          setIsLoading(false)
           return response.data; //ms download dc
         }
       }
