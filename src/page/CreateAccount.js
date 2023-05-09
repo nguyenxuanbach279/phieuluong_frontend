@@ -49,13 +49,12 @@ export default function CreateAccount() {
         appState.jwtToken,
         newAccount
       );
-      if (createNewAccountRes.data.status === 200) {
+      if (createNewAccountRes.data.status === 201) {
         toast.success(createNewAccountRes.data.message);
-      } else {
-        toast.error(createNewAccountRes.data.message);
       }
     } catch (error) {
       console.log(error);
+      toast.error("Tạo tài khoản thất bại");
     }
     setIsLoading(false)
   };

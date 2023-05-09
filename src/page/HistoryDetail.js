@@ -84,12 +84,12 @@ export default function HistoryDetail() {
       });
       if (response.status === 200) {
         toast.success("Tải xuống thành công");
+        setIsLoading(false)
         return response.data;
       }
     } catch (error) {
       console.error(error);
     }
-    setIsLoading(false)
   };
 
   const createExcelFile = (excelData) => {

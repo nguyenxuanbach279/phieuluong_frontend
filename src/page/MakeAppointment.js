@@ -412,7 +412,7 @@ export default function MakeAppointment() {
               type="text"
               value={keySearch}
               onChange={onChangeKeySearch}
-              placeholder="Search ..."
+              placeholder="Tìm kiếm ..."
               className="keySearchInput"
             />
             <Button

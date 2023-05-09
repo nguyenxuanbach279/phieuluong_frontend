@@ -120,7 +120,7 @@ export default function Account() {
           type="text"
           value={keySearch}
           onChange={onChangeKeySearch}
-          placeholder="Type your email"
+          placeholder="Nhập email..."
           className="keySearchInput"
         />
       </div>
