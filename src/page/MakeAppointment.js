@@ -41,10 +41,12 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import moment from "moment/moment";
 import * as XLSX from "xlsx";
 import axios from "axios";
+import TestSignalr from "./Notification";
+import * as signalR from "@aspnet/signalr";
 
 export default function MakeAppointment() {
   const navigate = useNavigate();
-  const { appState, dispatch, setIsLoading } = useContext(AppContext);
+  const { appState, dispatch, setIsLoading, noticationIsOpen, setNoticationIsOpen, name, setName } = useContext(AppContext);
   const [employeeList, setEmployeeList] = useState([]);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -59,10 +61,57 @@ export default function MakeAppointment() {
   const [open, setOpen] = useState(false);
   const [openSalaryPreview, setOpenSalaryPreview] = useState(false);
   const [employeeDetail, setEmployeeDetail] = useState();
+  const [time, setTime] = useState("");
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
+  const [connection, setConnection] = useState();
+  const [inputText, setInputText] = useState("");
+  const [valueSendMessage, setValueSendMessage] = useState("");
+  const [valueSendUser, setValueSendUser] = useState("");
+
+  useEffect(() => {
+    const connect = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7101/hubs/notification", {
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets,
+      })
+      .build();
+
+    setConnection(connect);
+  }, []);
+
+  useEffect(() => {
+    if (connection) {
+      connection
+        .start()
+        .then(() => {
+          connection.on("messageReceived", (username, message, sendDate) => {
+            onMessageReceived(username, message, sendDate);
+            setNoticationIsOpen(true);
+            setName(username);
+            setTime(sendDate);
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [connection]);
+
+  const changeTableSalary = () => {
+    sendNewMessage();
+  };
+  const onMessageReceived = (username, message) => {
+    setValueSendMessage(message);
+    setValueSendUser(username);
+  };
+  const sendNewMessage = () => {
+    if (connection) {
+      connection
+        .send("newMessage", appState?.accountInfo.name, "Update", new Date())
+        .then((x) => console.log("sent"));
+    }
+  };
   const handleClose = () => {
     setEmployeePrepareDelete({});
     setOpen(false);
@@ -90,6 +139,7 @@ export default function MakeAppointment() {
   const paycheck = ["Chưa gửi", "Đã gửi", "Xác nhận", "Không xác nhận"];
 
   const getEmployeeList = async (page) => {
+    setIsLoading(true);
     try {
       const employeeListRes = await api.getEmployeeList(
         appState.jwtToken,
@@ -108,6 +158,7 @@ export default function MakeAppointment() {
       // xu ly loi
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   const onChangePage = (event, page) => {
@@ -126,6 +177,8 @@ export default function MakeAppointment() {
   };
 
   const clickDeleteEmployee = async () => {
+    setIsLoading(true);
+    changeTableSalary();
     try {
       const deleteEmployeeRes = await api.deleteEmployee(
         appState.jwtToken,
@@ -139,6 +192,7 @@ export default function MakeAppointment() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   const employeeListChoosed = useCallback(() => {
@@ -188,8 +242,8 @@ export default function MakeAppointment() {
   };
 
   const clickSendPaycheck = async () => {
-    const data = employeeListChoosed();
     setIsLoading(true);
+    const data = employeeListChoosed();
     setShowModal(false);
     if (typeOfAppointment == "Gửi luôn") {
       try {
@@ -197,7 +251,6 @@ export default function MakeAppointment() {
         if (sendNowRes.status === 200) {
           toast.success("Gửi thành công");
         }
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -218,13 +271,13 @@ export default function MakeAppointment() {
         );
         if (sendNowRes.status === 200) {
           toast.success("Đặt lịch thành công");
-          setIsLoading(false);
           setShowModal(false);
         }
       } catch (error) {
         console.log(error);
       }
     }
+    setIsLoading(false);
   };
 
   const onChangeFile = async (e) => {
@@ -233,12 +286,14 @@ export default function MakeAppointment() {
     Object.values(temp).forEach((file) => {
       data.append("fileExcel", file);
     });
+    setIsLoading(true);
     try {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
         getEmployeeList(1);
+        changeTableSalary()
         toast.success("Upload thành công");
-        if(e) {
+        if (e) {
           e.target.files = null;
         }
       }
@@ -246,12 +301,14 @@ export default function MakeAppointment() {
       toast.error("error");
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   const totalSalary = 1000000;
 
   const clickPreviewEmployee = async (employee) => {
     setOpenSalaryPreview(true);
+    setIsLoading(true);
     try {
       const employeeDataRes = await api.getInfoEmployee(
         appState.jwtToken,
@@ -261,26 +318,49 @@ export default function MakeAppointment() {
         setEmployeeDetail(employeeDataRes.data.data);
       }
     } catch (error) {}
+    setIsLoading(false);
   };
 
   const getExcelData = async () => {
+    setIsLoading(true);
     try {
-      const response = await axios({
-        url: `https://localhost:7101/api/Employee/ExportToExcel`,
-        method: "GET",
-        responseType: "arraybuffer",
-        headers: {
-          Authorization: `Bearer ${appState.jwtToken}`,
-        },
-      });
-      if (response.status === 200) {
-        window.open('https://localhost:7101/api/Employee/ExportToExcel')
-        toast.success("Tải xuống thành công");
-        // return response.data; ms download dc
+      if (selected.length === 0) {
+        const response = await axios({
+          url: `https://localhost:7101/api/Employee/ExportToExcel`,
+          method: "GET",
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: `Bearer ${appState.jwtToken}`,
+          },
+        });
+        if (response.status === 200) {
+          window.open("https://localhost:7101/api/Employee/ExportToExcel");
+          toast.success("Tải xuống thành công");
+          // return response.data; ms download dc
+        }
+      } else {
+        const temp = employeeListChoosed();
+        const listId = temp.map((item) => item.id);
+        console.log(listId);
+        const response = await axios({
+          url: `https://localhost:7101/api/Employee/ExportByID`,
+          method: "POST",
+          data: listId,
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: `Bearer ${appState.jwtToken}`,
+          },
+        });
+        if (response.status === 200) {
+          // window.open('https://localhost:7101/api/Employee/ExportToExcel')
+          toast.success("Tải xuống thành công");
+          return response.data; //ms download dc
+        }
       }
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   const createExcelFile = (excelData) => {
@@ -313,6 +393,10 @@ export default function MakeAppointment() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const hasNotication = (bool) => {
+    setNoticationIsOpen(bool);
   };
 
   return (
@@ -511,7 +595,7 @@ export default function MakeAppointment() {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={pageSize}
-                  label="Page size"
+                  label="Size"
                   onChange={handleChangePageSize}
                 >
                   <MenuItem value={8}>8</MenuItem>
@@ -751,13 +835,22 @@ export default function MakeAppointment() {
             </div>
             <div className="totalSalary">
               <p>
-                Tổng lương được nhận: {totalSalary?.toLocaleString("it-IT")}{" "}
+                Tổng lương được nhận: {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
                 <span style={{ fontSize: 14 }}>VNĐ</span>
               </p>
             </div>
           </div>
         )}
       </Dialog>
+      {appState.accountInfo.name !== name && (
+        <TestSignalr
+          isOpen={noticationIsOpen}
+          hasNotication={hasNotication}
+          time={time}
+          name={name}
+          getEmployeeList={getEmployeeList}
+        />
+      )}
     </>
   );
 }

@@ -5,11 +5,12 @@ import { SideBar } from "../components";
 import { AppContext } from "../contexts/app.context";
 import "../css/HomePage.css";
 import api from "../services/api";
+import { Button } from "@mui/material";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState, dispatch, setIsLoading } = useContext(AppContext);
 
   useEffect(() => {
     if (appState == null || appState.loginUser == null) {
@@ -20,6 +21,7 @@ export default function HomePage() {
   }, []);
 
   const onLogout = async () => {
+    setIsLoading(true)
     try {
       const logoutRes = await api.logout();
     } catch (error) {
@@ -29,6 +31,7 @@ export default function HomePage() {
     dispatch({
       type: "RESET_STATE",
     });
+    setIsLoading(false)
   };
 
   if (appState == null || appState.loginUser == null) {

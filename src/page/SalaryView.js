@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "../css/SalaryView.css";
 import {
   Button,
@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom";
 import api from "../services/api";
 import moment from "moment";
 import { MdOutlineVisibility, MdVisibility } from "react-icons/md";
+import { AppContext } from "../contexts/app.context";
 export default function SalaryView() {
   const [employeeDetail, setEmployeeDetail] = useState("");
   const [open, setOpen] = React.useState(true);
@@ -23,8 +24,10 @@ export default function SalaryView() {
   const location = useLocation();
   const { search } = location;
   const id = search.slice(4);
+  const { setIsLoading } = useContext(AppContext);
 
   const getDetailEmployee = async () => {
+    setIsLoading(true)
     try {
       const employeeDataRes = await api.getInfoEmployeePrivate(id, password);
       if (employeeDataRes.status === 200) {
@@ -34,6 +37,7 @@ export default function SalaryView() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const changePassword = (e) => {
@@ -65,6 +69,7 @@ export default function SalaryView() {
   console.log(password);
 
   const submitSalary = async () => {
+    setIsLoading(true)
     try {
       const updateStatusRes = await api.updateEmployeePayCheckStatus(id, 2);
       if (updateStatusRes.status === 200) {
@@ -73,9 +78,11 @@ export default function SalaryView() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const reportSalary = async () => {
+    setIsLoading(true)
     try {
       const updateStatusRes = await api.updateEmployeePayCheckStatus(id, 3);
       if (updateStatusRes.status === 200) {
@@ -84,6 +91,7 @@ export default function SalaryView() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const clickShowHidePassword = () => {
@@ -199,7 +207,8 @@ export default function SalaryView() {
             </div>
             <div className="totalSalary">
               <p>
-                Tổng lương được nhận: {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
+                Tổng lương được nhận:{" "}
+                {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
                 <span style={{ fontSize: 14 }}>VNĐ</span>
               </p>
             </div>

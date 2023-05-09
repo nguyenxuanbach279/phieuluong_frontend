@@ -17,6 +17,10 @@ import {
   Button,
   IconButton,
   DialogActions,
+  Select,
+  MenuItem,
+  FormControl as FormControlMui,
+  InputLabel,
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
@@ -33,13 +37,14 @@ export default function History() {
   const [detailData, setDetailData] = useState("");
   const [open, setOpen] = useState(false);
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
-  const { appState } = useContext(AppContext);
+  const { appState, setIsLoading } = useContext(AppContext);
   const [historyId, setHistoryId] = useState(-1);
   const [openDetailInfo, setOpenDetailInfo] = useState(false);
   const [detailInfoChoose, setDetailInfoChoose] = useState({});
-  console.log(detailInfoChoose)
+  const [historyType, setHistoryType] = useState(0);
+
   const handleCloseDetailInfo = (item) => {
-    setDetailInfoChoose(item)
+    setDetailInfoChoose(item);
     setOpenDetailInfo(false);
   };
 
@@ -63,7 +68,7 @@ export default function History() {
     } else {
       getHistoryDataByName();
     }
-  }, [keySearch]);
+  }, [keySearch, historyType]);
 
   useEffect(() => {
     if (detailData) {
@@ -73,16 +78,23 @@ export default function History() {
   }, [detailData]);
 
   const getHistoryData = async () => {
+    setIsLoading(true)
     try {
       const historyDataRes = await api.getHistoryData(appState.jwtToken);
       console.log(historyDataRes);
       if (historyDataRes.status === 200) {
-        setHistoryData(historyDataRes.data.data);
+        if (historyType != 0) {
+          const temp = historyDataRes.data.data.filter(
+            (item) => item.typeChange == historyType
+          );
+          setHistoryData(temp);
+        } else setHistoryData(historyDataRes.data.data);
       }
     } catch (error) {
       // xu ly loi
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const types = [
@@ -95,6 +107,7 @@ export default function History() {
 
   const getHistoryDataByName = async () => {
     const data = keySearch;
+    setIsLoading(true)
     try {
       const historyDataByNameRes = await api.getHistoryDataByName(
         appState.jwtToken,
@@ -108,6 +121,7 @@ export default function History() {
       // xu ly loi
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const handleClose = () => {
@@ -122,11 +136,12 @@ export default function History() {
     // setOpen(true);
     // setHistoryId(history.idHistory);
     // setDetailData(history);
-    console.log(history)
-    navigate(`/history-detail/${history.idHistory}`)
+    console.log(history);
+    navigate(`/history-detail/${history.idHistory}`);
   };
 
   const getExcelData = async () => {
+    setIsLoading(true)
     try {
       const response = await axios({
         url: `https://localhost:7101/api/History/download?IDHistory=${historyId}`,
@@ -143,6 +158,7 @@ export default function History() {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false)
   };
 
   const createExcelFile = (excelData) => {
@@ -177,10 +193,36 @@ export default function History() {
     }
   };
 
+  const onChangeType = (e) => {
+    setHistoryType(e.target.value);
+  };
+
   return (
     <div className="historyContainer">
       <div className="historyTitleBox">
         <p className="historyTitle">Lịch sử</p>
+        <div>
+          <FormControlMui sx={{ width: 200 }}>
+            <InputLabel id="demo-simple-select-label1">
+              Loại thao tác
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label1"
+              id="demo-simple-select1"
+              value={historyType}
+              onChange={onChangeType}
+              sx={{ height: 48 }}
+              label="Loại thao tác"
+            >
+              <MenuItem value="1">Thêm nhân viên</MenuItem>
+              <MenuItem value="2">Chỉnh sửa nhân viên</MenuItem>
+              <MenuItem value="3">Xóa nhân viên</MenuItem>
+              <MenuItem value="4">Upload file excel</MenuItem>
+              <MenuItem value="5">Gửi phiếu lương</MenuItem>
+              <MenuItem value="0">Tất cả</MenuItem>
+            </Select>
+          </FormControlMui>
+        </div>
         <FormControl
           name="keysearch"
           type="text"
@@ -362,7 +404,7 @@ export default function History() {
         >
           <DialogTitle>Thông tin</DialogTitle>
           <DialogContent>
-            {detailData.typeChange == 2 }
+            {detailData.typeChange == 2}
             <Stack flexDirection="row" columnGap="100px">
               <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">

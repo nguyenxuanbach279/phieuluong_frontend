@@ -27,7 +27,7 @@ export default function Account() {
   const [accountList, setAccountList] = useState([]);
   const [keySearch, setKeySearch] = useState("");
   const [accountPrepareDelete, setAccountPrepareDelete] = useState({});
-  const { appState } = useContext(AppContext);
+  const { appState, setIsLoading } = useContext(AppContext);
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -51,6 +51,7 @@ export default function Account() {
   const getAccountList = async (key) => {
     if (key !== "") {
       try {
+        setIsLoading(true)
         const accountListRes = await api.getAccountByEmail(
           appState.jwtToken,
           key
@@ -58,16 +59,19 @@ export default function Account() {
         if (accountListRes.status === 200) {
           setAccountList(accountListRes.data.data);
         }
+        setIsLoading(false)
       } catch (error) {
         // xu ly loi
         console.log(error);
       }
     } else {
       try {
+        setIsLoading(true)
         const accountListRes = await api.getAccountList(appState.jwtToken);
         if (accountListRes.status === 200) {
           setAccountList(accountListRes.data.data);
         }
+        setIsLoading(false)
       } catch (error) {
         // xu ly loi
         console.log(error);
@@ -90,6 +94,7 @@ export default function Account() {
 
   const clickDeleteAccount = async () => {
     try {
+      setIsLoading(true)
       const deleteAccountRes = await api.deleteAccount(
         appState.jwtToken,
         accountPrepareDelete.email
@@ -99,8 +104,10 @@ export default function Account() {
         getAccountList(keySearch);
         toast.success("Xóa tài khoản thành công");
       }
+      setIsLoading(false)
     } catch (error) {
       console.log(error);
+      setIsLoading(false)
     }
   };
 

@@ -21,7 +21,7 @@ import EmployeeSalary from "../components/EmployeeSalary";
 
 export default function HistoryDetail() {
   const params = useParams();
-  const { appState } = useContext(AppContext);
+  const { appState, setIsLoading } = useContext(AppContext);
   const [detailData, setDetailData] = useState({});
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
   const [openDetailInfo, setOpenDetailInfo] = useState(false);
@@ -52,6 +52,7 @@ export default function HistoryDetail() {
   }, []);
 
   const getDetailHistory = async () => {
+    setIsLoading(true)
     try {
       const detailHistoryRes = await api.getHistoryDetailData(
         appState.jwtToken,
@@ -67,9 +68,11 @@ export default function HistoryDetail() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const getExcelData = async () => {
+    setIsLoading(true)
     try {
       const response = await axios({
         url: `https://localhost:7101/api/History/download?IDHistory=${params.idHistory}`,
@@ -86,6 +89,7 @@ export default function HistoryDetail() {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false)
   };
 
   const createExcelFile = (excelData) => {
