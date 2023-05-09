@@ -22,7 +22,7 @@ const loginSchema = Yup.object().shape({
 function LoginPage() {
   const navigate = useNavigate();
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState, dispatch, setIsLoading } = useContext(AppContext);
 
   useEffect(() => {
     if (appState && appState.loginUser) {
@@ -35,10 +35,7 @@ function LoginPage() {
   };
 
   const handleSubmit = async (values) => {
-    dispatch({
-      type: "IS_LOADING",
-      isLoading: true,
-    });
+    setIsLoading(true)
     try {
       const loginDataRes = await api.login(values.email, values.password);
       const userDecode = loginDataRes.data.data;
@@ -67,6 +64,7 @@ function LoginPage() {
     } catch (error) {
       toast.error("error");
     }
+    setIsLoading(false)
   };
 
   const clickForgotPassword = () => {

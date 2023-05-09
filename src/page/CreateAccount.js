@@ -19,7 +19,7 @@ const createAccountSchema = Yup.object().shape({
 
 export default function CreateAccount() {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const { appState } = useContext(AppContext);
+  const { appState, setIsLoading } = useContext(AppContext);
 
   useEffect(() => {
     if (appState.accountInfo.isAdmin == 0) {
@@ -43,6 +43,7 @@ export default function CreateAccount() {
       createdBy: appState.accountInfo.name,
       modifiedBy: appState.accountInfo.name,
     };
+    setIsLoading(true)
     try {
       const createNewAccountRes = await api.createNewAccount(
         appState.jwtToken,
@@ -56,6 +57,7 @@ export default function CreateAccount() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   return (

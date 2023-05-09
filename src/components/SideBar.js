@@ -6,7 +6,6 @@ import { BiHistory } from "react-icons/bi";
 import { AiOutlineSetting } from "react-icons/ai";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { AppContext } from "../contexts/app.context";
-import LogoIcon from "../images/logo.png";
 
 function SideBar() {
   const { appState, dispatch } = useContext(AppContext);

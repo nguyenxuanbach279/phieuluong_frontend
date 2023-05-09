@@ -45,7 +45,7 @@ const changeUserInfoSchema = Yup.object().shape({
 
 export default function Setting() {
   const navigate = useNavigate();
-  const { appState, dispatch } = useContext(AppContext);
+  const { appState, dispatch, setIsLoading } = useContext(AppContext);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [state, setState] = React.useState({
@@ -73,7 +73,7 @@ export default function Setting() {
       createdBy: appState.accountInfo.createdBy,
       modifiedBy: appState.accountInfo.name,
     };
-
+    setIsLoading(true)
     try {
       if (
         values.password !== "" &&
@@ -110,6 +110,7 @@ export default function Setting() {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false)
   };
 
   const loginAgain = () => {

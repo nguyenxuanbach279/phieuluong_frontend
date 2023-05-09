@@ -15,9 +15,10 @@ import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
+import * as signalR from "@aspnet/signalr";
 
 export default function EditEmployee() {
-  const { appState } = useContext(AppContext);
+  const { appState, setIsLoading, setNoticationIsOpen, name, setName } = useContext(AppContext);
   const location = useLocation();
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [employeeName, setEmployeeName] = useState("");
@@ -39,6 +40,7 @@ export default function EditEmployee() {
   const [employeeStatusEmployee, setEmployeeStatusEmployee] = useState(-1);
   const [employeeAdvance, setEmployeeAdvance] = useState("");
   const [totalSalary, setTotalSalary] = useState(0);
+  const [time, setTime] = useState("");
 
   const departments = [
     "Giám đốc",
@@ -80,6 +82,7 @@ export default function EditEmployee() {
   }, []);
 
   const getDetailEmployee = async () => {
+    setIsLoading(true);
     try {
       const employeeDataRes = await api.getInfoEmployee(
         appState.jwtToken,
@@ -111,13 +114,14 @@ export default function EditEmployee() {
         setEmployeeAdvance(employeeDataRes.data.data.advance);
         setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee);
         setSalaryMonth(employeeDataRes.data.data.month);
-        setTotalSalary(employeeDataRes.data.data.finalSalary)
+        setTotalSalary(employeeDataRes.data.data.finalSalary);
       }
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
-console.log(employeeDetail)
+  console.log(employeeDetail);
   const onChangeName = (e) => {
     setEmployeeName(e.target.value);
   };
@@ -182,6 +186,54 @@ console.log(employeeDetail)
     setEmployeeAdvance(e.target.value);
   };
 
+  const [connection, setConnection] = useState();
+  const [inputText, setInputText] = useState("");
+  const [valueSendMessage, setValueSendMessage] = useState("");
+  const [valueSendUser, setValueSendUser] = useState("");
+
+  useEffect(() => {
+    const connect = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7101/hubs/notification", {
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets,
+      })
+      .build();
+
+    setConnection(connect);
+  }, []);
+
+  useEffect(() => {
+    if (connection) {
+      connection
+        .start()
+        .then(() => {
+          connection.on("messageReceived", (username, message, sendDate) => {
+            onMessageReceived(username, message, sendDate);
+            setNoticationIsOpen(true);
+            setName(username);
+            setTime(sendDate);
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [connection]);
+
+  const changeTableSalary = () => {
+    sendNewMessage();
+  };
+
+  const onMessageReceived = (username, message) => {
+    setValueSendMessage(message);
+    setValueSendUser(username);
+  };
+  const sendNewMessage = () => {
+    if (connection) {
+      connection
+        .send("newMessage", appState?.accountInfo.name, "Update", new Date())
+        .then((x) => console.log("sent"));
+    }
+  };
+
   const clickSaveEmployeeInfo = async () => {
     const data = {
       id: employeeDetail.id || `abc${Math.floor(Math.random() * 1000000)}`,
@@ -205,7 +257,7 @@ console.log(employeeDetail)
       finalSalary: 1000000,
     };
 
-    console.log(data);
+    setIsLoading(true);
 
     try {
       if (location.pathname === "/appointment/employee/edit") {
@@ -215,6 +267,7 @@ console.log(employeeDetail)
         );
         if (updateInfoEmployeeRes.status === 200) {
           toast.success("Cập nhập thành công");
+          changeTableSalary()
         }
       } else {
         const createEmployeeRes = await api.createEmployee(
@@ -223,11 +276,13 @@ console.log(employeeDetail)
         );
         if (createEmployeeRes.status === 200) {
           toast.success("Thêm thành công");
+          changeTableSalary()
         }
       }
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   return (

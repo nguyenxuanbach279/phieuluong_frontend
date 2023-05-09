@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 import "../css/LoginPage.css";
 import { FiMail } from "react-icons/fi";
@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
+import { AppContext } from "../contexts/app.context";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
@@ -16,8 +17,9 @@ const loginSchema = Yup.object().shape({
 
 function ForgotPassword() {
   const navigate = useNavigate();
-
+  const { setIsLoading } = useContext(AppContext);
   const handleSubmit = async (values) => {
+    setIsLoading(true)
     try {
       const recoverPasswordRes = await api.forgotPassword(values.email);
       console.log(recoverPasswordRes);
@@ -29,6 +31,7 @@ function ForgotPassword() {
     } catch (error) {
       toast.error("error");
     }
+    setIsLoading(false)
   };
 
   const clickBackToLoginPage = () => {
