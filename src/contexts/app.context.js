@@ -9,14 +9,26 @@ const AppContextProvider = (props) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [noticationIsOpen, setNoticationIsOpen] = useState(false);
-  const [name, setName] = useState("")
+  const [name, setName] = useState("");
+  const [previousUrl, setPreviousUrl] = useState("/");
 
   useEffect(() => {
     localStorage.setItem("APP_STATE_KEY", JSON.stringify(appState));
   }, [appState]);
   return (
     <AppContext.Provider
-      value={{ appState, dispatch, isLoading, setIsLoading, noticationIsOpen, setNoticationIsOpen, name, setName }}
+      value={{
+        appState,
+        dispatch,
+        isLoading,
+        setIsLoading,
+        noticationIsOpen,
+        setNoticationIsOpen,
+        name,
+        setName,
+        previousUrl,
+        setPreviousUrl
+      }}
     >
       {props.children}
     </AppContext.Provider>

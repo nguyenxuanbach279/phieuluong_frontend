@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineUpload } from "react-icons/ai";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -46,7 +46,18 @@ import * as signalR from "@aspnet/signalr";
 
 export default function MakeAppointment() {
   const navigate = useNavigate();
-  const { appState, dispatch, setIsLoading, noticationIsOpen, setNoticationIsOpen, name, setName } = useContext(AppContext);
+  const location = useLocation();
+  const {
+    appState,
+    dispatch,
+    setIsLoading,
+    noticationIsOpen,
+    setNoticationIsOpen,
+    name,
+    setName,
+    previousUrl,
+    setPreviousUrl,
+  } = useContext(AppContext);
   const [employeeList, setEmployeeList] = useState([]);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
@@ -62,6 +73,8 @@ export default function MakeAppointment() {
   const [openSalaryPreview, setOpenSalaryPreview] = useState(false);
   const [employeeDetail, setEmployeeDetail] = useState();
   const [time, setTime] = useState("");
+  const [check, setCheck] = useState(0);
+  const [countGetApi, setCountGetApi] = useState(0);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -80,6 +93,7 @@ export default function MakeAppointment() {
       .build();
 
     setConnection(connect);
+    // setPreviousUrl(location.pathname)
   }, []);
 
   useEffect(() => {
@@ -89,15 +103,14 @@ export default function MakeAppointment() {
         .then(() => {
           connection.on("messageReceived", (username, message, sendDate) => {
             onMessageReceived(username, message, sendDate);
-            setNoticationIsOpen(true);
             setName(username);
             setTime(sendDate);
+            setNoticationIsOpen(true);
           });
         })
         .catch((error) => console.log(error));
     }
   }, [connection]);
-
   const changeTableSalary = () => {
     sendNewMessage();
   };
@@ -124,7 +137,10 @@ export default function MakeAppointment() {
 
   useEffect(() => {
     getEmployeeList(1);
+    setCountGetApi((prev) => prev + 1);
   }, [keySearch, pageSize]);
+
+  useEffect(() => {}, []);
 
   const departments = [
     "Giám đốc",
@@ -291,7 +307,7 @@ export default function MakeAppointment() {
       const uploadFileRes = await api.uploadExcel(appState.jwtToken, data);
       if (uploadFileRes.status === 200) {
         getEmployeeList(1);
-        changeTableSalary()
+        changeTableSalary();
         toast.success("Upload thành công");
         if (e) {
           e.target.files = null;
@@ -336,7 +352,7 @@ export default function MakeAppointment() {
         if (response.status === 200) {
           window.open("https://localhost:7101/api/Client/ExportToExcel");
           toast.success("Tải xuống thành công");
-          setIsLoading(false)
+          setIsLoading(false);
           // return response.data; ms download dc
         }
       } else {
@@ -353,9 +369,9 @@ export default function MakeAppointment() {
           },
         });
         if (response.status === 200) {
-          // window.open('https://localhost:7101/api/Employee/ExportToExcel')
+          // window.open('https://localhost:7101/api/Client/ExportByID')
           toast.success("Tải xuống thành công");
-          setIsLoading(false)
+          setIsLoading(false);
           return response.data; //ms download dc
         }
       }
@@ -837,7 +853,8 @@ export default function MakeAppointment() {
             </div>
             <div className="totalSalary">
               <p>
-                Tổng lương được nhận: {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
+                Tổng lương được nhận:{" "}
+                {employeeDetail.finalSalary?.toLocaleString("it-IT")}{" "}
                 <span style={{ fontSize: 14 }}>VNĐ</span>
               </p>
             </div>

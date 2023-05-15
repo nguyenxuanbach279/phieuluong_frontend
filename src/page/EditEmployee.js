@@ -18,7 +18,8 @@ import moment from "moment/moment";
 import * as signalR from "@aspnet/signalr";
 
 export default function EditEmployee() {
-  const { appState, setIsLoading, setNoticationIsOpen, name, setName } = useContext(AppContext);
+  const { appState, setIsLoading, setNoticationIsOpen, name, setName } =
+    useContext(AppContext);
   const location = useLocation();
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [employeeName, setEmployeeName] = useState("");
@@ -35,7 +36,7 @@ export default function EditEmployee() {
   const [employeeDoB, setEmployeeDoB] = useState("");
   const [salaryMonth, setSalaryMonth] = useState(1);
   const [taxFee, setTaxFee] = useState("");
-  const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState("");
+  const [employeeStatusPaycheck, setEmployeeStatusPaycheck] = useState(0);
   const [employeeStatusPayment, setEmployeeStatusPayment] = useState(0);
   const [employeeStatusEmployee, setEmployeeStatusEmployee] = useState(-1);
   const [employeeAdvance, setEmployeeAdvance] = useState("");
@@ -267,16 +268,20 @@ export default function EditEmployee() {
         );
         if (updateInfoEmployeeRes.status === 200) {
           toast.success("Cập nhập thành công");
-          changeTableSalary()
+          changeTableSalary();
         }
       } else {
         const createEmployeeRes = await api.createEmployee(
           appState.jwtToken,
           data
         );
-        if (createEmployeeRes.status === 200) {
+        console.log(createEmployeeRes);
+        if (createEmployeeRes?.data?.status === 200) {
           toast.success("Thêm thành công");
-          changeTableSalary()
+          changeTableSalary();
+        }
+        else{
+          toast.error(createEmployeeRes?.data?.message)
         }
       }
     } catch (error) {

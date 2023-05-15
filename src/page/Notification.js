@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as signalR from "@aspnet/signalr";
 import {
   Dialog,
@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import moment from "moment";
+import { AppContext } from "../contexts/app.context";
 export default function TestSignalr({
   isOpen,
   hasNotication,
@@ -21,6 +22,15 @@ export default function TestSignalr({
   const [valueSendMessage, setValueSendMessage] = useState("");
   const [valueSendUser, setValueSendUser] = useState("");
   const [open, setOpen] = React.useState(false);
+  const {
+    appState,
+    dispatch,
+    setIsLoading,
+    noticationIsOpen,
+    setNoticationIsOpen,
+    previousUrl,
+    setPreviousUrl,
+  } = useContext(AppContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -28,6 +38,7 @@ export default function TestSignalr({
 
   const handleClose = () => {
     hasNotication(false);
+    setPreviousUrl("/appointment");
   };
 
   useEffect(() => {

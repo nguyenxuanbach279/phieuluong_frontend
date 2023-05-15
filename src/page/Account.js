@@ -18,16 +18,17 @@ import {
 } from "@mui/material";
 import api from "../services/api";
 import { AppContext } from "../contexts/app.context";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FormControl } from "react-bootstrap";
 
 export default function Account() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [accountList, setAccountList] = useState([]);
   const [keySearch, setKeySearch] = useState("");
   const [accountPrepareDelete, setAccountPrepareDelete] = useState({});
-  const { appState, setIsLoading } = useContext(AppContext);
+  const { appState, setIsLoading, dispatch, setPreviousUrl } = useContext(AppContext);
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -37,6 +38,7 @@ export default function Account() {
 
   useEffect(() => {
     if (appState.accountInfo.isAdmin == 1) {
+      setPreviousUrl(location.pathname)
       getAccountList(keySearch);
     } else {
       toast.error("Bạn cần cấp quyền");
@@ -44,14 +46,13 @@ export default function Account() {
   }, []);
 
   useEffect(() => {
-    getAccountList(keySearch)
+    getAccountList(keySearch);
   }, [keySearch]);
-
 
   const getAccountList = async (key) => {
     if (key !== "") {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         const accountListRes = await api.getAccountByEmail(
           appState.jwtToken,
           key
@@ -59,19 +60,19 @@ export default function Account() {
         if (accountListRes.status === 200) {
           setAccountList(accountListRes.data.data);
         }
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         // xu ly loi
         console.log(error);
       }
     } else {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         const accountListRes = await api.getAccountList(appState.jwtToken);
         if (accountListRes.status === 200) {
           setAccountList(accountListRes.data.data);
         }
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         // xu ly loi
         console.log(error);
@@ -94,7 +95,7 @@ export default function Account() {
 
   const clickDeleteAccount = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const deleteAccountRes = await api.deleteAccount(
         appState.jwtToken,
         accountPrepareDelete.email
@@ -104,10 +105,10 @@ export default function Account() {
         getAccountList(keySearch);
         toast.success("Xóa tài khoản thành công");
       }
-      setIsLoading(false)
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 

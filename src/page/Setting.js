@@ -28,13 +28,13 @@ const changePasswordSchema = Yup.object().shape({
     .min(2, "Mật khẩu quá ngắn")
     .max(24, "Mật khẩu quá dài")
     .when("oldPassword", (oldPassword, field) =>
-      oldPassword ? field.required() : field
+      oldPassword ? field.required("Trường này bắt buộc nhập") : field
     ),
   confirmPassword: Yup.string()
     .notRequired()
     .nullable()
     .when("password", (password, field) =>
-      password ? field.required().oneOf([Yup.ref("password")]) : field
+      password ? field.required("Trường này bắt buộc nhập").oneOf([Yup.ref("password")]) : field
     ),
 });
 
