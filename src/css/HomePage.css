@@ -26,6 +26,7 @@
     justify-content: flex-end;
     align-items: center;
     background-color: #1e88e5;
+    padding-right: 24px;
 }
 
 .userInfo {

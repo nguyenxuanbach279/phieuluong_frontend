@@ -76,6 +76,8 @@ export default function MakeAppointment() {
   const [check, setCheck] = useState(0);
   const [countGetApi, setCountGetApi] = useState(0);
 
+  console.log(employeeList)
+
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
@@ -93,7 +95,6 @@ export default function MakeAppointment() {
       .build();
 
     setConnection(connect);
-    // setPreviousUrl(location.pathname)
   }, []);
 
   useEffect(() => {
@@ -320,8 +321,6 @@ export default function MakeAppointment() {
     setIsLoading(false);
   };
 
-  const totalSalary = 1000000;
-
   const clickPreviewEmployee = async (employee) => {
     setOpenSalaryPreview(true);
     setIsLoading(true);
@@ -421,7 +420,7 @@ export default function MakeAppointment() {
     <>
       <div className="employeeListContainer">
         <div className="employeeListTitleBox">
-          <p className="employeeListTitle">Bảng lương</p>
+          <p className="employeeListTitle">Bảng lương tháng {employeeList[0]?.month} năm {employeeList[0]?.year}</p>
           <div style={{ display: "flex", columnGap: 8 }}>
             <FormControl
               name="keysearch"
@@ -505,9 +504,6 @@ export default function MakeAppointment() {
                       Phòng ban
                     </TableCell>
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                      Tháng
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                       Ngày gửi
                     </TableCell>
                     <TableCell sx={{ textAlign: "center", padding: "4px" }}>
@@ -555,9 +551,6 @@ export default function MakeAppointment() {
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           {departments[employee.departmentID - 1]}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: "center", padding: "4px" }}>
-                          {employee.month}
                         </TableCell>
                         <TableCell sx={{ textAlign: "center", padding: "4px" }}>
                           {employee.sendDate

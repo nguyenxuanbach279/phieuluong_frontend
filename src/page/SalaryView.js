@@ -107,7 +107,7 @@ export default function SalaryView() {
               Xác thực phiếu lương tháng{" "}
               {employeeDetail.month < 10
                 ? `0${employeeDetail.month}`
-                : employeeDetail.month}
+                : employeeDetail.month} / {employeeDetail.year}
             </p>
             <div className="salaryDetail">
               <Stack flexDirection="column" rowGap={2} alignItems="flex-start">

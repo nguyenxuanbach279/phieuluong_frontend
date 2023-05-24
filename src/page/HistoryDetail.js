@@ -124,8 +124,6 @@ export default function HistoryDetail() {
     }
   };
 
-  console.log(detailData);
-
   return (
     <div className="historyDetailContainer">
       <div className="historyDetailTitleBox">
@@ -203,7 +201,7 @@ export default function HistoryDetail() {
               ) : (
                 <>
                   <Typography className="editHistoryInfo">
-                    Chi tiết : Không
+                    <span style={{marginRight: 40}}>Chi tiết: </span> Không
                   </Typography>
                 </>
               )}

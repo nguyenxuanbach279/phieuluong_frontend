@@ -43,7 +43,7 @@ function SideBar() {
   const menuItemAccountant = [
     {
       path: "/appointment",
-      name: "Đặt lịch",
+      name: "Bảng lương",
       icon: <BsCalendar3 />,
     },
     {
@@ -53,7 +53,7 @@ function SideBar() {
     },
     {
       path: "/setting",
-      name: "Cài đặt tài khoản",
+      name: "Cài đặt",
       icon: <AiOutlineSetting />,
     },
   ];

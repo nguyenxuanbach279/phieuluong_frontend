@@ -37,11 +37,11 @@ export default function History() {
   const [detailData, setDetailData] = useState("");
   const [open, setOpen] = useState(false);
   const [detailHistorySlice, setDetailHistorySlice] = useState([]);
-  const { appState, setIsLoading } = useContext(AppContext);
   const [historyId, setHistoryId] = useState(-1);
   const [openDetailInfo, setOpenDetailInfo] = useState(false);
   const [detailInfoChoose, setDetailInfoChoose] = useState({});
   const [historyType, setHistoryType] = useState(0);
+  const { appState, dispatch, setIsLoading } = useContext(AppContext);
 
   const handleCloseDetailInfo = (item) => {
     setDetailInfoChoose(item);
@@ -78,7 +78,7 @@ export default function History() {
   }, [detailData]);
 
   const getHistoryData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const historyDataRes = await api.getHistoryData(appState.jwtToken);
       console.log(historyDataRes);
@@ -94,7 +94,7 @@ export default function History() {
       // xu ly loi
       console.log(error);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const types = [
@@ -107,7 +107,7 @@ export default function History() {
 
   const getHistoryDataByName = async () => {
     const data = keySearch;
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const historyDataByNameRes = await api.getHistoryDataByName(
         appState.jwtToken,
@@ -121,7 +121,7 @@ export default function History() {
       // xu ly loi
       console.log(error);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const handleClose = () => {
@@ -141,7 +141,7 @@ export default function History() {
   };
 
   const getExcelData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await axios({
         url: `https://localhost:7101/api/History/download?IDHistory=${historyId}`,
@@ -158,7 +158,7 @@ export default function History() {
     } catch (error) {
       console.error(error);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const createExcelFile = (excelData) => {
@@ -194,9 +194,13 @@ export default function History() {
   };
 
   const onChangeType = (e) => {
+    dispatch({
+      type: "HISTORY_FILTER_TYPE",
+      historyFilterType: e.target.value,
+    });
     setHistoryType(e.target.value);
   };
-
+  console.log(appState)
   return (
     <div className="historyContainer">
       <div className="historyTitleBox">
@@ -209,7 +213,7 @@ export default function History() {
             <Select
               labelId="demo-simple-select-label1"
               id="demo-simple-select1"
-              value={historyType}
+              value={appState.historyFilterType}
               onChange={onChangeType}
               sx={{ height: 48 }}
               label="Loại thao tác"

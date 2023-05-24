@@ -9,6 +9,13 @@ import {
   Select,
   Stack,
   Typography,
+  Divider,
+  Box,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { useLocation, useParams } from "react-router-dom";
 import api from "../services/api";
@@ -16,6 +23,7 @@ import { AppContext } from "../contexts/app.context";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
 import * as signalR from "@aspnet/signalr";
+import { Table } from "react-bootstrap";
 
 export default function EditEmployee() {
   const { appState, setIsLoading, setNoticationIsOpen, name, setName } =
@@ -42,6 +50,10 @@ export default function EditEmployee() {
   const [employeeAdvance, setEmployeeAdvance] = useState("");
   const [totalSalary, setTotalSalary] = useState(0);
   const [time, setTime] = useState("");
+  const [year, setYear] = useState("");
+  const [salaryBonus, setSalaryBonus] = useState("");
+  const [reasonBonus, setReasonBonus] = useState("");
+  const [historySalary, setHistorySalary] = useState("");
 
   const departments = [
     "Giám đốc",
@@ -53,6 +65,13 @@ export default function EditEmployee() {
     "Hành chính",
   ];
 
+  const employeeStatus = [
+    "Chưa cập nhập",
+    "Đang làm",
+    "Nghỉ việc",
+    "Nghỉ thai sản",
+  ];
+
   const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   useEffect(() => {
@@ -62,7 +81,8 @@ export default function EditEmployee() {
           employeeCoefficyPower -
           employeeInsurance -
           taxFee -
-          employeeAdvance
+          employeeAdvance +
+          salaryBonus
       )
     );
   }, [
@@ -72,9 +92,8 @@ export default function EditEmployee() {
     employeeInsurance,
     taxFee,
     employeeAdvance,
+    salaryBonus,
   ]);
-
-  console.log(totalSalary);
 
   useEffect(() => {
     if (location.pathname === "/appointment/employee/edit") {
@@ -116,13 +135,17 @@ export default function EditEmployee() {
         setEmployeeStatusEmployee(employeeDataRes.data.data.statusEmployee);
         setSalaryMonth(employeeDataRes.data.data.month);
         setTotalSalary(employeeDataRes.data.data.finalSalary);
+        setYear(employeeDataRes.data.data.year);
+        setSalaryBonus(employeeDataRes.data.data.salaryBonus);
+        setReasonBonus(employeeDataRes.data.data.reasonBonus);
+        setHistorySalary(employeeDataRes.data.data.historySalary);
       }
     } catch (error) {
       console.log(error);
     }
     setIsLoading(false);
   };
-  console.log(employeeDetail);
+
   const onChangeName = (e) => {
     setEmployeeName(e.target.value);
   };
@@ -185,6 +208,18 @@ export default function EditEmployee() {
 
   const onChangeAdvance = (e) => {
     setEmployeeAdvance(e.target.value);
+  };
+
+  const onChangeReasonBonus = (e) => {
+    setReasonBonus(e.target.value);
+  };
+
+  const onChangeSalaryBonus = (e) => {
+    setSalaryBonus(e.target.value);
+  };
+
+  const onChangeYear = (e) => {
+    setYear(e.target.value);
   };
 
   const [connection, setConnection] = useState();
@@ -256,6 +291,10 @@ export default function EditEmployee() {
       statusPaycheck: employeeStatusPaycheck,
       paymentStatus: employeeStatusPayment,
       finalSalary: 1000000,
+      reasonBonus: reasonBonus,
+      salaryBonus: salaryBonus,
+      year: year,
+      historySalary: historySalary,
     };
 
     setIsLoading(true);
@@ -275,13 +314,11 @@ export default function EditEmployee() {
           appState.jwtToken,
           data
         );
-        console.log(createEmployeeRes);
         if (createEmployeeRes?.data?.status === 200) {
           toast.success("Thêm thành công");
           changeTableSalary();
-        }
-        else{
-          toast.error(createEmployeeRes?.data?.message)
+        } else {
+          toast.error(createEmployeeRes?.data?.message);
         }
       }
     } catch (error) {
@@ -290,12 +327,14 @@ export default function EditEmployee() {
     setIsLoading(false);
   };
 
+  console.log(historySalary);
+
   return (
     <div className="editEmployeeContainer">
       <div className="editEmployeeTitleBox">
         <p className="editEmployeeTitle">
           {location.pathname === "/appointment/employee/edit"
-            ? "Chỉnh sửa thông tin nhân viên"
+            ? `Thông tin phiếu lương`
             : "Tạo nhân viên mới"}
         </p>
 
@@ -328,72 +367,55 @@ export default function EditEmployee() {
       </div>
       <div className="editEmployeeContentBox">
         <div className="editEmployeeBox">
-          <Stack flexDirection="column" rowGap={2} alignItems="center">
-            <Stack
-              flexDirection="row"
-              columnGap={2}
-              alignItems="center"
-              height={48}
-            >
-              <Typography className="editEmployeeInfo">Họ và tên</Typography>
-              <TextField
-                value={employeeName}
-                type="text"
-                sx={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangeName}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Mã nhân viên</Typography>
-              <TextField
-                value={employeeCode}
-                type="text"
-                style={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangeEmployeeCode}
-              />
-            </Stack>
-            {location.pathname === "/appointment/employee/edit" ? (
-              <>
-                <Stack flexDirection="row" columnGap={2} alignItems="center">
-                  <Typography className="editEmployeeInfo">
-                    Địa chỉ gmail
-                  </Typography>
+          <Stack flexDirection="row" columnGap="80px">
+            <Stack flexDirection="column" rowGap={2} alignItems="center">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">Họ và tên</Typography>
+
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{employeeName}</Typography>
+                ) : (
                   <TextField
-                    value={employeeEmail}
-                    type="email"
-                    style={{ width: 200 }}
+                    value={employeeName}
+                    type="text"
+                    sx={{ width: 200 }}
                     inputProps={{
                       style: {
-                        readOnly: true,
                         height: "23px",
                         padding: "12.5px",
                       },
                     }}
+                    onChange={onChangeName}
                   />
-                </Stack>
-              </>
-            ) : (
-              <>
-                <Stack flexDirection="row" columnGap={2} alignItems="center">
-                  <Typography className="editEmployeeInfo">
-                    Địa chỉ gmail
-                  </Typography>
+                )}
+              </Stack>
+
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">
+                  Địa chỉ gmail
+                </Typography>
+
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{employeeEmail}</Typography>
+                ) : (
                   <TextField
                     value={employeeEmail}
-                    type="email"
-                    style={{ width: 200 }}
+                    type="text"
+                    sx={{ width: 200 }}
                     inputProps={{
                       style: {
                         height: "23px",
@@ -402,280 +424,695 @@ export default function EditEmployee() {
                     }}
                     onChange={onChangeEmployeeEmail}
                   />
-                </Stack>
-              </>
-            )}
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">Chức vụ</Typography>
 
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Chức vụ</Typography>
-              <TextField
-                value={employeePosition}
-                type="text"
-                style={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangePosition}
-              />
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{employeePosition}</Typography>
+                ) : (
+                  <TextField
+                    value={employeePosition}
+                    type="text"
+                    sx={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
+                    onChange={onChangePosition}
+                  />
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">
+                  Số điện thoại
+                </Typography>
+
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{employeePhone}</Typography>
+                ) : (
+                  <TextField
+                    value={employeePhone}
+                    type="text"
+                    sx={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
+                    onChange={onChangePhone}
+                  />
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                justifyContent="flex-start"
+                width="100%"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo">Trạng thái</Typography>
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>
+                    {employeeStatus[employeeStatusEmployee]}
+                  </Typography>
+                ) : (
+                  <FormControl style={{ width: 200, height: 48 }}>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={employeeStatusEmployee}
+                      onChange={onChangeStatusEmployee}
+                      sx={{ height: 48 }}
+                    >
+                      <MenuItem value="0">Chưa cập nhập</MenuItem>
+                      <MenuItem value="1">Đang làm</MenuItem>
+                      <MenuItem value="2">Nghỉ việc</MenuItem>
+                      <MenuItem value="3">Nghỉ thai sản</MenuItem>
+                    </Select>
+                  </FormControl>
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo">
+                  Lương cơ bản
+                </Typography>
+                <TextField
+                  value={employeeSalary}
+                  type="text"
+                  style={{ width: 200 }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                  onChange={onChangeSalary}
+                />
+              </Stack>
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">
+                  Chỉ số chấm công
+                </Typography>
+                <TextField
+                  value={employeeCoefficyTimeKeeping}
+                  type="text"
+                  style={{ width: 200 }}
+                  onChange={onChangeCoefficyTimeKeeping}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">công</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                />
+              </Stack>
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">Hệ số</Typography>
+                <TextField
+                  value={employeeCoefficyPower}
+                  type="text"
+                  style={{ width: 200 }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                  onChange={onChangeCoefficyPower}
+                />
+              </Stack>
+
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">Thanh toán</Typography>
+                <FormControl style={{ width: 200, height: 48 }}>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={employeeStatusPayment}
+                    onChange={onChangePaymentStatus}
+                    sx={{ height: 48 }}
+                  >
+                    <MenuItem value="0">Chưa thanh toán</MenuItem>
+                    <MenuItem value="1">Đã thanh toán</MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">
+                  Lý do thưởng
+                </Typography>
+                <TextField
+                  value={reasonBonus}
+                  type="text"
+                  style={{ width: 200 }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                  onChange={onChangeReasonBonus}
+                />
+              </Stack>
             </Stack>
-            <Stack
-              flexDirection="row"
-              columnGap={2}
-              alignItems="center"
-              height={48}
-            >
-              <Typography className="editEmployeeInfo">Lương cơ bản</Typography>
-              <TextField
-                value={employeeSalary}
-                type="text"
-                style={{ width: 200 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">VNĐ</InputAdornment>
-                  ),
-                }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangeSalary}
-              />
+
+            <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">
+                  Mã nhân viên
+                </Typography>
+
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{employeeCode}</Typography>
+                ) : (
+                  <TextField
+                    value={employeeCode}
+                    type="text"
+                    sx={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
+                    onChange={onChangeEmployeeCode}
+                  />
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo">Phòng ban</Typography>
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>
+                    {departments[employeeDepartmentID - 1]}
+                  </Typography>
+                ) : (
+                  <FormControl style={{ width: 200, height: 48 }}>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={employeeDepartmentID}
+                      onChange={onChangeDepartmentID}
+                      sx={{ height: 48 }}
+                    >
+                      {departments.map((item, index) => {
+                        return (
+                          <MenuItem value={index + 1} key={item}>
+                            {item}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                )}
+              </Stack>
+
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                justifyContent="flex-start"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo" align="left">
+                  Ngày sinh
+                </Typography>
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>
+                    {moment(employeeDoB, "YYYY-MM-DD").format("DD/MM/YYYY")}
+                  </Typography>
+                ) : (
+                  <TextField
+                    value={employeeDoB}
+                    type="date"
+                    onChange={onChangeEmployeeDoB}
+                    sx={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
+                  />
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo">Tháng</Typography>
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{salaryMonth}</Typography>
+                ) : (
+                  <FormControl style={{ width: 200, height: 48 }}>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={salaryMonth}
+                      onChange={onChangeSalaryMonth}
+                      sx={{ height: 48 }}
+                    >
+                      {month.map((item, index) => {
+                        return (
+                          <MenuItem value={index + 1} key={item}>
+                            {item}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+                justifyContent="flex-start"
+                width="100%"
+              >
+                <Typography className="editEmployeeInfo">Năm</Typography>
+
+                {location.pathname === "/appointment/employee/edit" ? (
+                  <Typography>{year}</Typography>
+                ) : (
+                  <TextField
+                    value={year}
+                    type="text"
+                    sx={{ width: 200 }}
+                    inputProps={{
+                      style: {
+                        height: "23px",
+                        padding: "12.5px",
+                      },
+                    }}
+                    onChange={onChangeYear}
+                  />
+                )}
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+              >
+                <Typography className="editEmployeeInfo">Thuế TNCN</Typography>
+                <TextField
+                  value={taxFee}
+                  type="text"
+                  style={{ width: 200 }}
+                  onChange={onChangeTaxFee}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                />
+              </Stack>
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">
+                  Tiền ứng trước
+                </Typography>
+                <TextField
+                  value={employeeAdvance}
+                  type="text"
+                  style={{ width: 200 }}
+                  onChange={onChangeAdvance}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                />
+              </Stack>
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">
+                  Tiền bảo hiểm
+                </Typography>
+                <TextField
+                  value={employeeInsurance}
+                  type="text"
+                  onChange={onChangeInsurance}
+                  style={{ width: 200 }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                />
+              </Stack>
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography className="editEmployeeInfo">
+                  Tiền thưởng
+                </Typography>
+                <TextField
+                  value={salaryBonus}
+                  type="text"
+                  onChange={onChangeSalaryBonus}
+                  style={{ width: 200 }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    style: {
+                      height: "23px",
+                      padding: "12.5px",
+                    },
+                  }}
+                />
+              </Stack>
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                height={48}
+              >
+                <Typography width="140px" fontWeight={700}>
+                  Lương thực nhận:
+                </Typography>
+                <Typography>
+                  {totalSalary.toLocaleString("it-IT")} VNĐ
+                </Typography>
+              </Stack>
             </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Hệ số</Typography>
-              <TextField
-                value={employeeCoefficyPower}
-                type="text"
-                style={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangeCoefficyPower}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">
-                Số điện thoại
-              </Typography>
-              <TextField
-                value={employeePhone}
-                type="text"
-                style={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-                onChange={onChangePhone}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Thanh toán</Typography>
-              <FormControl style={{ width: 200, height: 48 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={employeeStatusPayment}
-                  onChange={onChangePaymentStatus}
-                  sx={{ height: 48 }}
-                >
-                  <MenuItem value="0">Chưa thanh toán</MenuItem>
-                  <MenuItem value="1">Đã thanh toán</MenuItem>
-                </Select>
-              </FormControl>
-            </Stack>
+
+            {/* <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
+              <Stack flexDirection="row" columnGap={2} alignItems="center">
+                <Typography width="280px">
+                  <span style={{ fontWeight: 700 }}>Lương thực nhận:</span>{" "}
+                  {totalSalary.toLocaleString("it-IT")} VNĐ
+                </Typography>
+              </Stack>
+            </Stack> */}
           </Stack>
 
-          <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">
-                Chỉ số chấm công
+          {location.pathname === "/appointment/employee/edit" ? (
+            <>
+              {" "}
+              <Typography sx={{ mt: "40px", fontWeight: 700, fontSize: 22 }}>
+                Lịch sử bảng lương của nhân viên
               </Typography>
-              <TextField
-                value={employeeCoefficyTimeKeeping}
-                type="text"
-                style={{ width: 200 }}
-                onChange={onChangeCoefficyTimeKeeping}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">công</InputAdornment>
-                  ),
-                }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-              />
-            </Stack>
-            <Stack
-              flexDirection="row"
-              columnGap={2}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Typography className="editEmployeeInfo" align="left">
-                Ngày sinh
-              </Typography>
-              <TextField
-                value={employeeDoB}
-                type="date"
-                onChange={onChangeEmployeeDoB}
-                sx={{ width: 200 }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-              />
-            </Stack>
+              <Box className="historySalaryTable">
+                {historySalary && (
+                  <TableContainer
+                    sx={{
+                      height: 450,
+                      borderTop: "none",
+                      minWidth: 600,
+                    }}
+                  >
+                    <Table stickyHeader aria-label="sticky table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            Thời gian
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Lương cơ bản
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Thuế TNCN
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Chỉ số chấm công
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (Ngày công)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Tiền ứng trước
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Hệ số
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (*)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Tiền bảo hiểm
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Tiền thưởng
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                          <TableCell
+                            sx={{ textAlign: "center", padding: "8px" }}
+                          >
+                            <Typography
+                              style={{ fontSize: "14px", fontWeight: 500 }}
+                            >
+                              Lương thực nhận
+                            </Typography>
+                            <Typography
+                              style={{
+                                fontSize: "10px",
+                                fontWeight: 400,
+                                fontStyle: "italic",
+                              }}
+                            >
+                              (VNĐ)
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {JSON.parse(historySalary).map((item, index) => {
+                          console.log(item);
+                          return (
+                            <TableRow key={index} hover>
+                              {item.Month < 10 ? (
+                                <TableCell
+                                  sx={{ textAlign: "center", padding: "8px" }}
+                                >
+                                  0{item.Month}/{item.Year}
+                                </TableCell>
+                              ) : (
+                                <TableCell
+                                  sx={{ textAlign: "center", padding: "8px" }}
+                                >
+                                  {item.Month}/{item.Year}
+                                </TableCell>
+                              )}
 
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">
-                Tiền bảo hiểm
-              </Typography>
-              <TextField
-                value={employeeInsurance}
-                type="text"
-                onChange={onChangeInsurance}
-                style={{ width: 200 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">VNĐ</InputAdornment>
-                  ),
-                }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Trạng thái</Typography>
-              <FormControl style={{ width: 200, height: 48 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={employeeStatusEmployee}
-                  onChange={onChangeStatusEmployee}
-                  sx={{ height: 48 }}
-                >
-                  <MenuItem value="0">Chưa cập nhập</MenuItem>
-                  <MenuItem value="1">Đang làm</MenuItem>
-                  <MenuItem value="2">Nghỉ việc</MenuItem>
-                  <MenuItem value="3">Nghỉ thai sản</MenuItem>
-                </Select>
-              </FormControl>
-            </Stack>
-            <Stack
-              flexDirection="row"
-              columnGap={2}
-              alignItems="center"
-              height={48}
-            >
-              <Typography className="editEmployeeInfo">Thuế TNCN</Typography>
-              <TextField
-                value={taxFee}
-                type="text"
-                style={{ width: 200 }}
-                onChange={onChangeTaxFee}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">VNĐ</InputAdornment>
-                  ),
-                }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">
-                Tiền ứng trước
-              </Typography>
-              <TextField
-                value={employeeAdvance}
-                type="text"
-                style={{ width: 200 }}
-                onChange={onChangeAdvance}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">VNĐ</InputAdornment>
-                  ),
-                }}
-                inputProps={{
-                  style: {
-                    height: "23px",
-                    padding: "12.5px",
-                  },
-                }}
-              />
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Phòng ban</Typography>
-              <FormControl style={{ width: 200, height: 48 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={employeeDepartmentID}
-                  onChange={onChangeDepartmentID}
-                  sx={{ height: 48 }}
-                >
-                  {departments.map((item, index) => {
-                    return (
-                      <MenuItem value={index + 1} key={item}>
-                        {item}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Stack>
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography className="editEmployeeInfo">Tháng</Typography>
-              <FormControl style={{ width: 200, height: 48 }}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={salaryMonth}
-                  onChange={onChangeSalaryMonth}
-                  sx={{ height: 48 }}
-                >
-                  {month.map((item, index) => {
-                    return (
-                      <MenuItem value={index + 1} key={item}>
-                        {item}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Stack>
-          </Stack>
-
-          <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
-            <Stack flexDirection="row" columnGap={2} alignItems="center">
-              <Typography width="280px">
-                Tổng lương nhận: {totalSalary.toLocaleString("it-IT")} VNĐ
-              </Typography>
-            </Stack>
-          </Stack>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.BasicSalary.toLocaleString("it-IT")}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.TaxFee.toLocaleString("it-IT")}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.CoefficyTimeKeeping}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.Advance.toLocaleString("it-IT")}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.CoefficyPower}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.Insurance.toLocaleString("it-IT")}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.SalaryBonus.toLocaleString("it-IT")}
+                              </TableCell>
+                              <TableCell
+                                sx={{ textAlign: "center", padding: "8px" }}
+                              >
+                                {item.FinalSalary.toLocaleString("it-IT")}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                )}
+              </Box>
+            </>
+          ) : null}
         </div>
       </div>
     </div>

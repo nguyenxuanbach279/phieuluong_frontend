@@ -30,12 +30,11 @@
 
 .editEmployeeBox {
     width: 100%;
+    height: 100%;
     background-color: #fff;
     padding: 10px 20px;
     height: 555px;
     overflow: auto;
-    display: flex;
-    column-gap: 80px;
     border-radius: 8px;
 }
 
@@ -49,4 +48,5 @@
     column-gap: 8px;
     align-items: center;
     flex: 3;
+    margin-right: 24px;
 }

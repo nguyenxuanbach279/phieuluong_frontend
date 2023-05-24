@@ -5,6 +5,7 @@ const initialState = {
   accountInfo: null,
   employeeIdEdit: null,
   isLoading: false,
+  historyFilterType: 0,
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -38,6 +39,11 @@ export const appReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.isLoading,
+      };
+    case "HISTORY_FILTER_TYPE":
+      return {
+        ...state,
+        historyFilterType: action.historyFilterType,
       };
     case "RESET_STATE":
       return initialState;
