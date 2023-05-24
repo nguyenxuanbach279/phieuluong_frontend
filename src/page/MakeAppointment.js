@@ -393,6 +393,8 @@ export default function MakeAppointment() {
     return excelBlob;
   };
 
+  console.log(employeeDetail)
+
   const downloadExcelFile = (excelBlob) => {
     const excelUrl = URL.createObjectURL(excelBlob);
     const link = document.createElement("a");
@@ -839,6 +841,15 @@ export default function MakeAppointment() {
                   </Typography>
                   <Typography>
                     {employeeDetail.advance?.toLocaleString("it-IT")}{" "}
+                    <span style={{ fontSize: 14 }}>VNĐ</span>
+                  </Typography>
+                </Stack>
+                <Stack flexDirection="row" columnGap="2px" alignItems="center">
+                  <Typography className="salaryviewInfo">
+                    Tiền thưởng:
+                  </Typography>
+                  <Typography>
+                    {employeeDetail.salaryBonus?.toLocaleString("it-IT")}{" "}
                     <span style={{ fontSize: 14 }}>VNĐ</span>
                   </Typography>
                 </Stack>
