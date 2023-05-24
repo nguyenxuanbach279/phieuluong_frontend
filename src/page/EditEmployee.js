@@ -81,8 +81,8 @@ export default function EditEmployee() {
           employeeCoefficyPower -
           employeeInsurance -
           taxFee -
-          employeeAdvance +
-          salaryBonus
+          employeeAdvance -
+          salaryBonus * -1
       )
     );
   }, [
