@@ -48,14 +48,6 @@ export default function SalaryView() {
     getDetailEmployee();
   };
 
-  const totalSalary = Math.floor(
-    ((employeeDetail.basicSalary * employeeDetail.coefficyTimeKeeping) / 22) *
-      employeeDetail.coefficyPower -
-      employeeDetail.insurance -
-      employeeDetail.taxFee -
-      employeeDetail.advance
-  );
-
   const departments = [
     "Giám đốc",
     "Quản lý",
