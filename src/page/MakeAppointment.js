@@ -76,7 +76,7 @@ export default function MakeAppointment() {
   const [check, setCheck] = useState(0);
   const [countGetApi, setCountGetApi] = useState(0);
 
-  console.log(employeeList)
+  console.log(appState)
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -637,6 +637,14 @@ export default function MakeAppointment() {
                 style={{ minWidth: 120, height: 40 }}
                 disabled={!Boolean(selected.length)}
               >
+                Đã thanh toán
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleShowModal}
+                style={{ minWidth: 120, height: 40 }}
+                disabled={!Boolean(selected.length)}
+              >
                 Gửi
               </Button>
             </Stack>
@@ -800,7 +808,7 @@ export default function MakeAppointment() {
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">
                   <Typography className="salaryviewInfo">Phòng ban:</Typography>
                   <Typography>
-                    {departments[employeeDetail.departmentID]}
+                    {departments[employeeDetail.departmentID-1]}
                   </Typography>
                 </Stack>
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">

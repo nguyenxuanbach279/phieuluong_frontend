@@ -3,7 +3,7 @@ import moment from "moment";
 import React from "react";
 
 export default function EmployeeDetail({ historyDetailInfo }) {
-  console.log(historyDetailInfo);
+  console.log("A",historyDetailInfo);
   const departments = [
     "Giám đốc",
     "Quản lý",

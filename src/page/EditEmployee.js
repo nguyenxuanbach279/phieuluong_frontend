@@ -54,6 +54,11 @@ export default function EditEmployee() {
   const [salaryBonus, setSalaryBonus] = useState("");
   const [reasonBonus, setReasonBonus] = useState("");
   const [historySalary, setHistorySalary] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [bankBranch, setBankBranch] = useState("");
+  const [bankCode, setBankCode] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
 
   const departments = [
     "Giám đốc",
@@ -139,6 +144,11 @@ export default function EditEmployee() {
         setSalaryBonus(employeeDataRes.data.data.salaryBonus);
         setReasonBonus(employeeDataRes.data.data.reasonBonus);
         setHistorySalary(employeeDataRes.data.data.historySalary);
+        setBankName(employeeDataRes.data.data.bankName);
+        setBankCode(employeeDataRes.data.data.bankCode);
+        setBankBranch(employeeDataRes.data.data.bankBranch);
+        setAccountName(employeeDataRes.data.data.accountName);
+        setAccountNumber(employeeDataRes.data.data.accountNumber);
       }
     } catch (error) {
       console.log(error);
@@ -295,6 +305,11 @@ export default function EditEmployee() {
       salaryBonus: salaryBonus,
       year: year,
       historySalary: historySalary,
+      bankName: bankName,
+      bankBranch: bankBranch,
+      bankCode: bankCode,
+      accountName: accountName,
+      accountNumber: accountNumber,
     };
 
     setIsLoading(true);
@@ -314,7 +329,7 @@ export default function EditEmployee() {
           appState.jwtToken,
           data
         );
-        if (createEmployeeRes?.data?.status === 200) {
+        if (createEmployeeRes?.data?.status === 201) {
           toast.success("Thêm thành công");
           changeTableSalary();
         } else {
@@ -517,6 +532,7 @@ export default function EditEmployee() {
                 columnGap={2}
                 alignItems="center"
                 height={48}
+                width="100%"
               >
                 <Typography className="editEmployeeInfo">
                   Lương cơ bản
@@ -539,7 +555,12 @@ export default function EditEmployee() {
                   onChange={onChangeSalary}
                 />
               </Stack>
-              <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                width="100%"
+              >
                 <Typography className="editEmployeeInfo">
                   Chỉ số chấm công
                 </Typography>
@@ -561,7 +582,12 @@ export default function EditEmployee() {
                   }}
                 />
               </Stack>
-              <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                width="100%"
+              >
                 <Typography className="editEmployeeInfo">Hệ số</Typography>
                 <TextField
                   value={employeeCoefficyPower}
@@ -577,7 +603,12 @@ export default function EditEmployee() {
                 />
               </Stack>
 
-              <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                width="100%"
+              >
                 <Typography className="editEmployeeInfo">Thanh toán</Typography>
                 <FormControl style={{ width: 200, height: 48 }}>
                   <Select
@@ -593,7 +624,12 @@ export default function EditEmployee() {
                 </FormControl>
               </Stack>
 
-              <Stack flexDirection="row" columnGap={2} alignItems="center">
+              <Stack
+                flexDirection="row"
+                columnGap={2}
+                alignItems="center"
+                width="100%"
+              >
                 <Typography className="editEmployeeInfo">
                   Lý do thưởng
                 </Typography>
@@ -864,20 +900,34 @@ export default function EditEmployee() {
                 </Typography>
               </Stack>
             </Stack>
-
-            {/* <Stack flexDirection="column" rowGap={2} alignItems="flex-start">
-              <Stack flexDirection="row" columnGap={2} alignItems="center">
-                <Typography width="280px">
-                  <span style={{ fontWeight: 700 }}>Lương thực nhận:</span>{" "}
-                  {totalSalary.toLocaleString("it-IT")} VNĐ
-                </Typography>
-              </Stack>
-            </Stack> */}
           </Stack>
 
           {location.pathname === "/appointment/employee/edit" ? (
             <>
               {" "}
+              <Stack mt="20px">
+                <Stack flexDirection="row" columnGap="12px">
+                  <Typography fontWeight="500">
+                    Thông tin ngân hàng:{" "}
+                  </Typography>
+                  {bankBranch &&
+                  bankCode &&
+                  bankName &&
+                  accountName &&
+                  accountNumber ? (
+                    <Stack>
+                      <Typography>
+                        {bankCode} - {bankBranch}
+                      </Typography>
+                      <Typography>
+                        {accountName} - {accountNumber}
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <Typography fontStyle="italic">Không có thông tin</Typography>
+                  )}
+                </Stack>
+              </Stack>
               <Typography sx={{ mt: "40px", fontWeight: 700, fontSize: 22 }}>
                 Lịch sử bảng lương của nhân viên
               </Typography>

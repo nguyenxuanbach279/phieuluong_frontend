@@ -232,11 +232,11 @@ export default function HistoryDetail() {
                 height: "100%",
                 maxWidth:
                   detailData.typeChange == 2
-                    ? "1400px"
+                    ? "1600px"
                     : detailData.typeChange == 5
                     ? "1100px"
                     : "700px",
-                maxHeight: detailData.typeChange == 5 ? "600px" : "400px",
+                maxHeight: detailData.typeChange == 5 ? "600px" : "600px",
               },
             },
           }}
@@ -246,7 +246,7 @@ export default function HistoryDetail() {
           </DialogTitle>
           <DialogContent>
             {detailData.typeChange == 2 && (
-              <Stack flexDirection="row" columnGap="28px">
+              <Stack flexDirection="row" columnGap="20px">
                 <Stack>
                   <Typography
                     sx={{ fontSize: 20, fontWeight: 500, marginBottom: "12px" }}
@@ -269,9 +269,9 @@ export default function HistoryDetail() {
               </Stack>
             )}
             {detailData.typeChange == 1 ||
-              (detailData.typeChange == 3 && (
+              detailData.typeChange == 3 && (
                 <EmployeeDetail historyDetailInfo={historyDetailInfo} />
-              ))}
+              )}
             {detailData.typeChange == 5 && (
               <>
                 <EmployeeSalary employeeDetail={salaryViewInfo} />

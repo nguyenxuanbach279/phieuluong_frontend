@@ -96,4 +96,5 @@
 .mainContent{
     padding-top: 16px;
     flex: 2;
+    overflow: auto;
 }
