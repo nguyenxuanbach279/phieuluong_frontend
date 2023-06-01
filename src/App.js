@@ -21,6 +21,8 @@ import EditEmployee from "./page/EditEmployee";
 import NotFound from "./page/NotFound";
 import { LoadingSpinner } from "./components";
 import HistoryDetail from "./page/HistoryDetail";
+import EmployeeList from "./page/EmployeeList";
+import EditPerson from "./page/EditPerson";
 
 function App() {
   const { appState, dispatch, isLoading } = useContext(AppContext);
@@ -52,6 +54,17 @@ function App() {
           />
           <Route exact path="/appointment" element={<MakeAppointment />} />
           <Route exact path="/setting" element={<Setting />} />
+          <Route exact path="/staff" element={<EmployeeList />} />
+          <Route
+            exact
+            path="/staff/edit"
+            element={<EditPerson />}
+          />
+          <Route
+            exact
+            path="/staff/create"
+            element={<EditPerson />}
+          />
         </Route>
         <Route exact path="*" element={<NotFound />} />
       </Routes>

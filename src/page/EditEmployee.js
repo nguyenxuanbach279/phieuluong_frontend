@@ -300,7 +300,7 @@ export default function EditEmployee() {
       month: salaryMonth,
       statusPaycheck: employeeStatusPaycheck,
       paymentStatus: employeeStatusPayment,
-      finalSalary: 1000000,
+      finalSalary: totalSalary,
       reasonBonus: reasonBonus,
       salaryBonus: salaryBonus,
       year: year,

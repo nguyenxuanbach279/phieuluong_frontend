@@ -4,7 +4,7 @@ import "../css/Sidebar.css";
 import { BsCalendar3 } from "react-icons/bs";
 import { BiHistory } from "react-icons/bi";
 import { AiOutlineSetting } from "react-icons/ai";
-import { MdOutlineAccountCircle } from "react-icons/md";
+import { MdOutlineAccountCircle, MdOutlinePersonPin } from "react-icons/md";
 import { AppContext } from "../contexts/app.context";
 
 function SideBar() {
@@ -37,6 +37,11 @@ function SideBar() {
       path: "/account",
       name: "Tài khoản",
       icon: <MdOutlineAccountCircle />,
+    },
+    {
+      path: "/staff",
+      name: "Nhân viên",
+      icon: <MdOutlinePersonPin />,
     },
   ];
 
@@ -93,7 +98,9 @@ function SideBar() {
                 <div
                   key={index}
                   className={
-                    appState.indexItem === index ? "itemBox active" : "itemBox"
+                    location.pathname.includes(item.path)
+                      ? "itemBox active"
+                      : "itemBox"
                   }
                   onClick={() => onClickItem(index)}
                 >

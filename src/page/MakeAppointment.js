@@ -674,7 +674,7 @@ export default function MakeAppointment() {
               alignItems="center"
               justifyContent="center"
             >
-              <Button
+              {/* <Button
                 variant="contained"
                 onClick={clickCreateEmployeePage}
                 style={{ minWidth: 120, height: 40 }}
@@ -688,7 +688,7 @@ export default function MakeAppointment() {
                 disabled={!Boolean(selected.length)}
               >
                 Thanh toán
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 onClick={handleShowModal}
