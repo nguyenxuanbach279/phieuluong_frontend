@@ -68,7 +68,7 @@ export default function History() {
     } else {
       getHistoryDataByName();
     }
-  }, [keySearch, historyType]);
+  }, [keySearch, appState.historyFilterType]);
 
   useEffect(() => {
     if (detailData) {
@@ -83,9 +83,9 @@ export default function History() {
       const historyDataRes = await api.getHistoryData(appState.jwtToken);
       console.log(historyDataRes);
       if (historyDataRes.status === 200) {
-        if (historyType != 0) {
+        if (appState.historyFilterType != 0) {
           const temp = historyDataRes.data.data.filter(
-            (item) => item.typeChange == historyType
+            (item) => item.typeChange == appState.historyFilterType
           );
           setHistoryData(temp);
         } else setHistoryData(historyDataRes.data.data);
@@ -96,6 +96,8 @@ export default function History() {
     }
     setIsLoading(false);
   };
+
+  console.log(appState)
 
   const types = [
     "Thêm nhân viên",
@@ -200,7 +202,7 @@ export default function History() {
     });
     setHistoryType(e.target.value);
   };
-  console.log(appState)
+
   return (
     <div className="historyContainer">
       <div className="historyTitleBox">
