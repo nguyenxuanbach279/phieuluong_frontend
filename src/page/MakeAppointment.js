@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Form, FormControl, Modal } from "react-bootstrap";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
@@ -75,9 +81,26 @@ export default function MakeAppointment() {
   const [time, setTime] = useState("");
   const [check, setCheck] = useState(0);
   const [countGetApi, setCountGetApi] = useState(0);
+  const [isOpenModalConfirmPayment, setIsOpenModalConfirmPayment] =
+    useState(false);
+  const [employeeSelected, setEmployeeSelected] = useState([]);
 
-  console.log(appState)
+  const temp1 = useMemo(() => {
+    const temp = employeeList.reduce((total, item) => {
+      if (selected.includes(item.email)) {
+        total.push(item);
+      }
+      return total;
+    }, []);
+    setEmployeeSelected(temp);
+  }, [selected]);
 
+  const handleOpenModalConfirmPayment = () => {
+    setIsOpenModalConfirmPayment(true);
+  };
+  const handleCloseModalConfirmPayment = () => {
+    setIsOpenModalConfirmPayment(false);
+  };
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
@@ -205,6 +228,32 @@ export default function MakeAppointment() {
         setOpen(false);
         toast.success("Xóa thành công");
         getEmployeeList(pageNumber);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  const clickConfirmPayment = async () => {
+    setIsLoading(true);
+    const data = employeeListChoosed();
+    const temp = data.filter((item) => item.statusPaycheck == 2);
+    const isAllConfirm = temp.length === data.length;
+    setIsOpenModalConfirmPayment(false);
+    try {
+      if (isAllConfirm) {
+        const confirmPaymentRes = await api.confirmPayment(
+          appState.jwtToken,
+          data
+        );
+        if (confirmPaymentRes.status === 200) {
+          toast.success("Đã xác nhận thành công");
+        } else {
+          toast.error("Có lỗi xảy ra khi gửi");
+        }
+      } else {
+        toast.warning("Có nhân viên chưa xác nhận");
       }
     } catch (error) {
       console.log(error);
@@ -393,8 +442,6 @@ export default function MakeAppointment() {
     return excelBlob;
   };
 
-  console.log(employeeDetail)
-
   const downloadExcelFile = (excelBlob) => {
     const excelUrl = URL.createObjectURL(excelBlob);
     const link = document.createElement("a");
@@ -422,7 +469,10 @@ export default function MakeAppointment() {
     <>
       <div className="employeeListContainer">
         <div className="employeeListTitleBox">
-          <p className="employeeListTitle">Bảng lương tháng {employeeList[0]?.month} năm {employeeList[0]?.year}</p>
+          <p className="employeeListTitle">
+            Bảng lương tháng {employeeList[0]?.month} năm{" "}
+            {employeeList[0]?.year}
+          </p>
           <div style={{ display: "flex", columnGap: 8 }}>
             <FormControl
               name="keysearch"
@@ -633,11 +683,11 @@ export default function MakeAppointment() {
               </Button>
               <Button
                 variant="contained"
-                onClick={handleShowModal}
+                onClick={handleOpenModalConfirmPayment}
                 style={{ minWidth: 120, height: 40 }}
                 disabled={!Boolean(selected.length)}
               >
-                Đã thanh toán
+                Thanh toán
               </Button>
               <Button
                 variant="contained"
@@ -808,7 +858,7 @@ export default function MakeAppointment() {
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">
                   <Typography className="salaryviewInfo">Phòng ban:</Typography>
                   <Typography>
-                    {departments[employeeDetail.departmentID-1]}
+                    {departments[employeeDetail.departmentID - 1]}
                   </Typography>
                 </Stack>
                 <Stack flexDirection="row" columnGap="2px" alignItems="center">
@@ -882,6 +932,43 @@ export default function MakeAppointment() {
           getEmployeeList={getEmployeeList}
         />
       )}
+
+      <Dialog
+        open={isOpenModalConfirmPayment}
+        onClose={handleCloseModalConfirmPayment}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          "& .MuiDialog-container": {
+            "& .MuiPaper-root": {
+              width: "100%",
+              maxWidth: "500px",
+            },
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">Xác nhận thanh toán</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Xác nhận thanh toán với{" "}
+            {employeeSelected.map((item) => {
+              return <span key={item.id}>{item.name}, </span>;
+            })}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={handleCloseModalConfirmPayment}
+            style={{ minWidth: 100 }}
+          >
+            Hủy
+          </Button>
+          <Button variant="contained" onClick={clickConfirmPayment} autoFocus>
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

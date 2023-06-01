@@ -225,6 +225,15 @@ const exportToExcel = (jwtToken) => {
   });
 };
 
+const confirmPayment = (jwtToken, data) => {
+  return api.post(`Schedule/sendPaymentSuccess`, data, {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 export default {
   getEmployeeList,
   login,
@@ -250,4 +259,5 @@ export default {
   getAccountByEmail,
   exportToExcel,
   getHistoryDetailData,
+  confirmPayment
 };
