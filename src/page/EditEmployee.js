@@ -59,6 +59,7 @@ export default function EditEmployee() {
   const [bankCode, setBankCode] = useState("");
   const [accountName, setAccountName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
+  const [taxFeeCaculated, setTaxFeeCaculated] = useState(0);
 
   const departments = [
     "Giám đốc",
@@ -342,7 +343,35 @@ export default function EditEmployee() {
     setIsLoading(false);
   };
 
-  console.log(historySalary);
+  function tinhThueThuNhapCaNhan(thuNhap) {
+    var thue = 0;
+    if (thuNhap <= 5000000) {
+      thue = thuNhap * 0.05;
+    } else if (thuNhap <= 10000000) {
+      thue = 250000 + (thuNhap - 5000000) * 0.1;
+    } else if (thuNhap <= 18000000) {
+      thue = 750000 + (thuNhap - 10000000) * 0.15;
+    } else if (thuNhap <= 32000000) {
+      thue = 1950000 + (thuNhap - 18000000) * 0.2;
+    } else if (thuNhap <= 52000000) {
+      thue = 4750000 + (thuNhap - 32000000) * 0.25;
+    } else if (thuNhap <= 80000000) {
+      thue = 9750000 + (thuNhap - 52000000) * 0.3;
+    } else {
+      thue = 18150000 + (thuNhap - 80000000) * 0.35;
+    }
+    return Math.floor(thue);
+  }
+
+  useEffect(() => {
+    const temp = tinhThueThuNhapCaNhan(
+      ((employeeSalary * employeeCoefficyTimeKeeping) / 22) *
+        employeeCoefficyPower -
+        salaryBonus * -1
+    );
+    setTaxFeeCaculated(temp);
+    // setTaxFee(temp)
+  }, [employeeSalary, employeeCoefficyTimeKeeping, employeeCoefficyPower, salaryBonus]);
 
   return (
     <div className="editEmployeeContainer">
@@ -818,6 +847,7 @@ export default function EditEmployee() {
                       padding: "12.5px",
                     },
                   }}
+                  
                 />
               </Stack>
               <Stack flexDirection="row" columnGap={2} alignItems="center">
@@ -924,7 +954,9 @@ export default function EditEmployee() {
                       </Typography>
                     </Stack>
                   ) : (
-                    <Typography fontStyle="italic">Không có thông tin</Typography>
+                    <Typography fontStyle="italic">
+                      Không có thông tin
+                    </Typography>
                   )}
                 </Stack>
               </Stack>
